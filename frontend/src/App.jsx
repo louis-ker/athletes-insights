@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Dock from './components/Dock'
 import { VscHome, VscArchive, VscAccount, VscSettingsGear } from 'react-icons/vsc'
 
-import ScrollReveal from 'scrollreveal'
 import styled from 'styled-components'
 
 import Hyperspeed from './components/Hyperspeed';
@@ -253,7 +252,7 @@ export const hyperspeedPresets = {
 
 
 export default function App() {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('');
 
   const fetchMessage = async () => {
     try {
@@ -272,94 +271,100 @@ export default function App() {
     { icon: <VscSettingsGear size={24} />, label: 'Settings', onClick: () => alert('Settings!') },
   ]
 
-  useEffect(() => {
-    ScrollReveal().reveal('.reveal', {
-      duration: 1000,
-      distance: '50px',
-      origin: 'bottom',
-      easing: 'ease-in-out',
-      reset: false,
-    })
-  }, [])
+
 
   return (
     <Page>
       {/* <h1 className="reveal">Frontend Vite ⚡</h1>
       <button className="reveal" onClick={fetchMessage}>Parle moi backend !</button>
       {message && <p className="reveal">{message}</p>} */}
+        <img className="reveal" src={speedSkatersImage} alt="Description de l'image" />
+        <Hyperspeed
+          effectOptions={{
+            onSpeedUp: () => { },
+            onSlowDown: () => { },
+            // distortion: 'turbulentDistortion',
+            length: 700,
+            roadWidth: 100,
+            islandWidth: 0,
+            lanesPerRoad: 1,
+            fov: 90,
+            fovSpeedUp: 150,
+            speedUp: 2,
+            carLightsFade: 0.8,
+            totalSideLightSticks: 20,
+            lightPairsPerRoadWay: 4000,
+            shoulderLinesWidthPercentage: 0.01,
+            brokenLinesWidthPercentage: 0.1,
+            brokenLinesLengthPercentage: 1,
+            lightStickWidth: [1, 10],
+            lightStickHeight: [1.3, 1.7],
+            movingAwaySpeed: [60, 80],
+            movingCloserSpeed: [-120, -160],
+            carLightsLength: [400 * 0.03, 400 * 0.2],
+            carLightsRadius: [0.05, 0.14],
+            carWidthPercentage: [0.3, 0.5],
+            carShiftX: [0, 1],
+            carFloorSeparation: [0, 0],
+            colors: {
+              // Violet Glace
+              // roadColor: 0xFFFFFF,
+              // islandColor: 0x0a0a0a,
+              // background: 0x000000,
+              // shoulderLines: 0xFFFFFF,
+              // brokenLines: 0xFFFFFF,
+              // leftCars: [0xD856BF, 0x6750A2, 0xC247AC],
+              // rightCars: [0x03B3C3, 0x0E5EA5, 0x324555],
+              // sticks: 0x03B3C3,
 
-      <Hyperspeed
-        effectOptions={{
-          onSpeedUp: () => { },
-          onSlowDown: () => { },
-          // distortion: 'turbulentDistortion',
-          length: 700,
-          roadWidth: 100,
-          islandWidth: 0,
-          lanesPerRoad: 1,
-          fov: 90,
-          fovSpeedUp: 150,
-          speedUp: 2,
-          carLightsFade: 0.8,
-          totalSideLightSticks: 20,
-          lightPairsPerRoadWay: 4000,
-          shoulderLinesWidthPercentage: 0.01,
-          brokenLinesWidthPercentage: 0.1,
-          brokenLinesLengthPercentage: 1,
-          lightStickWidth: [1, 10],
-          lightStickHeight: [1.3, 1.7],
-          movingAwaySpeed: [60, 80],
-          movingCloserSpeed: [-120, -160],
-          carLightsLength: [400 * 0.03, 400 * 0.2],
-          carLightsRadius: [0.05, 0.14],
-          carWidthPercentage: [0.3, 0.5],
-          carShiftX: [0, 1],
-          carFloorSeparation: [0, 0],
-          colors: {
-            // Violet Glace
-            // roadColor: 0xFFFFFF,
-            // islandColor: 0x0a0a0a,
-            // background: 0x000000,
-            // shoulderLines: 0xFFFFFF,
-            // brokenLines: 0xFFFFFF,
-            // leftCars: [0xD856BF, 0x6750A2, 0xC247AC],
-            // rightCars: [0x03B3C3, 0x0E5EA5, 0x324555],
-            // sticks: 0x03B3C3,
+              // Trou noir
+              // roadColor: 0xffda8a,
+              roadColor: 0xffe3a6,
+              islandColor: 0x0a0a0a,
+              background: 0x000000,
+              shoulderLines: 0xFFFFFF,
+              brokenLines: 0xFFFFFF,
+              leftCars: [0xFFFFFF, 0xfc9803, 0xfc0303],
+              rightCars: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
+              sticks: 0xb300ff,
 
-            // Trou noir
-            // roadColor: 0xffda8a,
-            roadColor: 0xffe3a6,
-            islandColor: 0x0a0a0a,
-            background: 0x000000,
-            shoulderLines: 0xFFFFFF,
-            brokenLines: 0xFFFFFF,
-            leftCars: [0xFFFFFF, 0xfc9803, 0xfc0303],
-            rightCars: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
-            sticks: 0xb300ff,
-
-            // ISU
-            // roadColor: 0xd9f1ff,
-            // islandColor: 0x0a0a0a,
-            // background: 0x000000,
-            // shoulderLines: 0xFFFFFF,
-            // brokenLines: 0xFFFFFF,
-            // leftCars: [0x001aff, 0x001aff, 0x001aff],
-            // rightCars: [0x001aff, 0x001aff, 0x001aff],
-            // sticks: 0x03B3C3,
-          }
-        }}
-      />
-
-      <img className="reveal" src={speedSkatersImage} alt="Description de l'image" />
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
+              // ISU
+              // roadColor: 0xd9f1ff,
+              // islandColor: 0x0a0a0a,
+              // background: 0x000000,
+              // shoulderLines: 0xFFFFFF,
+              // brokenLines: 0xFFFFFF,
+              // leftCars: [0x001aff, 0x001aff, 0x001aff],
+              // rightCars: [0x001aff, 0x001aff, 0x001aff],
+              // sticks: 0x03B3C3,
+            }
+          }}
+        />
       
-
-      
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
     
       <Dock
         items={dockItems}
