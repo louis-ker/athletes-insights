@@ -6,10 +6,16 @@
 }
 
 .dock-panel {
-  position: absolute;
+  /* position: absolute;
   bottom: 0.5rem;
   left: 50%;
+  transform: translateX(-50%); */
+  position: fixed;           
+  bottom: 0.5rem;               
+  left: 50%;
   transform: translateX(-50%);
+  z-index: 9999;
+
   display: flex;
   align-items: flex-end;
   width: fit-content;
@@ -19,6 +25,7 @@
   border: 1px solid #222;
   padding: 0 0.5rem 0.5rem;
 }
+
 
 .dock-item {
   position: relative;
