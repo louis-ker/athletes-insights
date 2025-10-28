@@ -382,7 +382,7 @@ export default function App() {
           speedUp: 2,
           carLightsFade: 0.8,
           totalSideLightSticks: 20,
-          lightPairsPerRoadWay: 400,
+          lightPairsPerRoadWay: 4000,
           shoulderLinesWidthPercentage: 0.01,
           brokenLinesWidthPercentage: 0.1,
           brokenLinesLengthPercentage: 1,
@@ -396,15 +396,36 @@ export default function App() {
           carShiftX: [0, 1],
           carFloorSeparation: [0, 0],
           colors: {
-            // roadColor: 0x080808,
-            roadColor: 0xFFFFFF,
+            // Violet Glace
+            // roadColor: 0xFFFFFF,
+            // islandColor: 0x0a0a0a,
+            // background: 0x000000,
+            // shoulderLines: 0xFFFFFF,
+            // brokenLines: 0xFFFFFF,
+            // leftCars: [0xD856BF, 0x6750A2, 0xC247AC],
+            // rightCars: [0x03B3C3, 0x0E5EA5, 0x324555],
+            // sticks: 0x03B3C3,
+
+            // Trou noir
+            // roadColor: 0xffda8a,
+            roadColor: 0xffe3a6,
             islandColor: 0x0a0a0a,
             background: 0x000000,
             shoulderLines: 0xFFFFFF,
             brokenLines: 0xFFFFFF,
-            leftCars: [0xD856BF, 0x6750A2, 0xC247AC],
-            rightCars: [0x03B3C3, 0x0E5EA5, 0x324555],
+            leftCars: [0xFFFFFF, 0xfc9803, 0xfc0303],
+            rightCars: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
             sticks: 0x03B3C3,
+
+            // ISU
+            // roadColor: 0xd9f1ff,
+            // islandColor: 0x0a0a0a,
+            // background: 0x000000,
+            // shoulderLines: 0xFFFFFF,
+            // brokenLines: 0xFFFFFF,
+            // leftCars: [0x001aff, 0x001aff, 0x001aff],
+            // rightCars: [0x001aff, 0x001aff, 0x001aff],
+            // sticks: 0x03B3C3,
           }
         }}
       />
