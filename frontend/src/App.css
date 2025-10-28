@@ -10,8 +10,14 @@ html, body, #root {
 }
 
 img {
+  position: absolute;
   max-width: 100%;
   height: auto;
   display: block;
   margin: 0 auto;
+  z-index: 1;
+}
+
+.h1 {
+  z-index: 0;
 }

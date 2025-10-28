@@ -922,7 +922,7 @@ const Hyperspeed = ({
         float height = aMetrics.y;
 
         transformed.xy *= vec2(width, height);
-        float time = mod(uTime * 60. * 2. + aOffset, uTravelLength);
+        float time = mod(-uTime * 60. * 2. + aOffset, uTravelLength);
 
         transformed = (rotationY(3.14/2.) * vec4(transformed,1.)).xyz;
 
