@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'https://athletes-insights.onrender.com/api/hello'
+      '/api': 'https://athletes-insights-backend.onrender.com/api/hello'
     }
   },
   build: {
