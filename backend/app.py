@@ -2,11 +2,11 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # autorise les appels du frontend
+CORS(app)
 
-@app.route('/api/hello', methods=['GET'])
+@app.route("/api/hello")
 def hello():
-    return jsonify({"message": "Salut depuis le backend Python ! 🐍"})
+    return jsonify({"message": "Hello from Flask!"})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
