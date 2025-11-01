@@ -1,5 +1,11 @@
+# BACKEND
 # Virtual environement
 /backend/.venv
+# Variables environnement
+/backend/.env
+__pycache__
 
+# FRONTEND
 # NPM pour run localement
 /frontend/node_modules
+

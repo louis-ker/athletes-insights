@@ -10,6 +10,8 @@ import Hyperspeed from './components/Hyperspeed';
 import './App.css'
 import speedSkatersImage from './assets/speedSkaters.png'
 
+import Chatbot from "./components/Chatbot";
+
 
 const Page = styled.div`
   width: 100vw;
@@ -23,7 +25,6 @@ const Page = styled.div`
   justify-content: flex-start;
   text-align: center;
 `
-
 export const hyperspeedPresets = {
   one: {
     onSpeedUp: () => {},
@@ -250,7 +251,7 @@ export const hyperspeedPresets = {
   }
 };
 
-
+// ======================= MAIN =======================
 export default function App() {
   const [message, setMessage] = useState('');
 
@@ -271,13 +272,8 @@ export default function App() {
     { icon: <VscSettingsGear size={24} />, label: 'Settings', onClick: () => alert('Settings!') },
   ]
 
-
-
   return (
     <Page>
-      {/* <h1 className="reveal">Frontend Vite ⚡</h1>
-      <button className="reveal" onClick={fetchMessage}>Parle moi backend !</button>
-      {message && <p className="reveal">{message}</p>} */}
         <img className="reveal" src={speedSkatersImage} alt="Description de l'image" />
         <Hyperspeed
           effectOptions={{
@@ -349,6 +345,14 @@ export default function App() {
       <h1>test</h1>
       <h1>test</h1>
       <h1>test</h1>
+      <h1 className="reveal">Frontend Vite ⚡</h1>
+      <button className="reveal" onClick={fetchMessage}>Parle moi backend !</button>
+      {message && <p className="reveal">{message}</p>}
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>test</h1>
+      <h1>Chat avec RAGFlow 🤖</h1>
+      <Chatbot />
       <h1>test</h1>
       <h1>test</h1>
       <h1>test</h1>
@@ -362,9 +366,7 @@ export default function App() {
       <h1>test</h1>
       <h1>test</h1>
       <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
+      
     
       <Dock
         items={dockItems}

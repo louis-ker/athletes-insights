@@ -1,2 +1,5 @@
-flask
+ragflow
+Flask
 flask-cors
+requests
+openai
