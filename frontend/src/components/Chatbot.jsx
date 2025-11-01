@@ -11,7 +11,10 @@ export default function Chatbot() {
     setMessages(newMessages);
     setInput("");
 
-    const response = await fetch("http://127.0.0.1:4000//api/ask", {
+    // POUR PASSER EN LOCAL -> modifier VITE_API_URL dans .env
+    const API_URL = import.meta.env.VITE_API_URL; // à modifier dans .env
+    
+    const response = await fetch(`${API_URL}/api/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: input, session_id: "user123" })
