@@ -12,9 +12,10 @@ export default function Chatbot() {
     setInput("");
 
     // POUR PASSER EN LOCAL -> modifier VITE_API_URL dans .env
-    const API_URL = import.meta.env.VITE_API_URL; // à modifier dans .env
+    // remplacer    https://athletes-insights-backend.onrender.com/api/ask
+    // par          http://127.0.0.1:4000//api/ask
     
-    const response = await fetch(`${API_URL}/api/ask`, {
+    const response = await fetch("https://athletes-insights-backend.onrender.com/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: input, session_id: "user123" })
