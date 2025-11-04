@@ -13,6 +13,8 @@ import speedSkatersImage from './assets/speedSkaters.png'
 import Chatbot from "./components/Chatbot";
 
 
+
+
 const Page = styled.div`
   width: 100vw;
   height: 100%;
@@ -368,13 +370,13 @@ export default function App() {
       <h1>test</h1>
       
     
-      <Dock
+      {/* <Dock
         items={dockItems}
         panelHeight={88}
         baseItemSize={80}
         magnification={120}
         distance={200}
-      />
+      /> */}
     </Page>
   )
 }

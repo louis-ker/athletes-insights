@@ -86,6 +86,6 @@ def ask_ragflow(question, session_id="default"):
 
     except Exception as e:
         return {
-            "answer": f"Erreur RAGFlow : {e}",
+            "answer": f"[Erreur RAGFlow] Le serveur ne tourne pas : {e}",
             "sources": []
         }
