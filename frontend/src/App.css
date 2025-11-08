@@ -22,3 +22,18 @@ img {
 .h1 {
   z-index: 0;
 }
+
+.colorBlock {
+  width: 100%;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.colorBlock.chatBot{
+  width: 100%;
+  /* background-color: rgb(25, 25, 25); */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+

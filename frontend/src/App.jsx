@@ -12,7 +12,16 @@ import speedSkatersImage from './assets/speedSkaters.png'
 
 import Chatbot from "./components/Chatbot";
 
-
+import BarChart from "./components/graphs/MixedBarChart.jsx";
+import BarGraphHorizontal from "./components/graphs/BarChartHorizontal.jsx";
+import AppThemeProvider from "./components/graphs/Theme.jsx";
+import { ThemeProvider } from '@mui/material/styles';
+import MessageBox from "./components/MessageBox.jsx";
+import BarAnimation from "./components/graphs/BarAnimation.jsx"
+import DifferentLength from './components/graphs/DifferentLength.jsx';
+import BasicPie from './components/graphs/BasicPie.jsx';
+import Scatter from "./components/graphs/ScatterSelectors.jsx";
+import ScatterRegressionLine from './components/graphs/ScatterRegressionLine.jsx';
 
 
 const Page = styled.div`
@@ -338,37 +347,25 @@ export default function App() {
             }
           }}
         />
-      
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
+        <div class="colorBlock chatBot">
+          <MessageBox></MessageBox>
+        </div>
+        <div class="colorBlock">
+        <AppThemeProvider mode="dark">
+          <BarChart></BarChart>
+          <BarGraphHorizontal></BarGraphHorizontal>
+          <BarAnimation></BarAnimation>
+          <DifferentLength></DifferentLength>
+          <BasicPie></BasicPie>
+          <Scatter></Scatter>
+          <ScatterRegressionLine></ScatterRegressionLine>
+        </AppThemeProvider>
+        </div>
       <h1 className="reveal">Frontend Vite ⚡</h1>
       <button className="reveal" onClick={fetchMessage}>Parle moi backend !</button>
       {message && <p className="reveal">{message}</p>}
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
       <h1>Chat avec RAGFlow 🤖</h1>
       <Chatbot />
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      <h1>test</h1>
-      
     
       {/* <Dock
         items={dockItems}
