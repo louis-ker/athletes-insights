@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import BounceLoader from "react-spinners/BounceLoader";
 
-export default function Chatbot() {
+export default function Chatbot({ className }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function Chatbot() {
   };
 
   return (
-    <div
+    <div className={`chatbot-container ${className || ''}`}
       style={{
         padding: 20,
         background: "#f5f5f5",

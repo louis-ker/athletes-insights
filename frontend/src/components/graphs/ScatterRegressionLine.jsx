@@ -105,38 +105,40 @@ const dollarFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 });
 
-export default function ScatterRegressionLine() {
+export default function ScatterRegressionLine({ className }) {
   return (
-    <Stack width="100%">
-      <Typography variant="h6" component="span" textAlign="center">
-        Relation between Weight and Price of Diamonds
-      </Typography>
-      <ScatterChart
-        dataset={diamonds}
-        height={300}
-        xAxis={[{ min: 0, label: 'Weight (carats)' }]}
-        yAxis={[
-          {
-            min: 0,
-            width: 80,
-            valueFormatter: (value) => dollarFormatter.format(value),
-            label: 'Price (USD)',
-          },
-        ]}
-        series={[
-          {
-            id: 'diamonds',
-            datasetKeys: { x: 'carat', y: 'price' },
-            markerSize: 2,
-            valueFormatter: (v) => `${dollarFormatter.format(v.y)} for ${v.x} carat`,
-          },
-        ]}
-      >
-        <RegressionLine seriesId="diamonds" />
-      </ScatterChart>
+    <div className={`chatbot-container ${className || ''}`}>
+      <Stack width="100%">
+        <Typography variant="h6" component="span" textAlign="center">
+          Relation between Weight and Price of Diamonds
+        </Typography>
+        <ScatterChart
+          dataset={diamonds}
+          height={300}
+          xAxis={[{ min: 0, label: 'Weight (carats)' }]}
+          yAxis={[
+            {
+              min: 0,
+              width: 80,
+              valueFormatter: (value) => dollarFormatter.format(value),
+              label: 'Price (USD)',
+            },
+          ]}
+          series={[
+            {
+              id: 'diamonds',
+              datasetKeys: { x: 'carat', y: 'price' },
+              markerSize: 2,
+              valueFormatter: (v) => `${dollarFormatter.format(v.y)} for ${v.x} carat`,
+            },
+          ]}
+        >
+          <RegressionLine seriesId="diamonds" />
+        </ScatterChart>
 
-      <Typography variant="caption">Source: OpenML</Typography>
-    </Stack>
+        <Typography variant="caption">Source: OpenML</Typography>
+      </Stack>
+    </div>
   );
 }
 

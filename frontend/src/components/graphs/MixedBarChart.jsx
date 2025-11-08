@@ -55,27 +55,29 @@ const xLabels = [
   'Page G',
 ];
 
-export default function MixedBarChart() {
+export default function MixedBarChart({ className }) {
   const theme = useTheme();
 
   return (
-    <Box sx={{ width: '100%', height: 400 }}>
-      <BarChart
-        series={[
-          // Les couleurs viennent du thème (cohérent clair/sombre)
-          { data: pData, label: 'pv', stack: 'stack1', color: theme.palette.primary.main },
-          { data: amtData, label: 'amt', color: theme.palette.error.main },
-          { data: uData, label: 'uv', stack: 'stack1', color: theme.palette.secondary.main },
-        ]}
-        xAxis={[{ data: xLabels }]}
-        yAxis={[{ width: 50 }]}
-        // Styles d’axes/légende pilotés par le thème
-        sx={(t) => ({
-          '& .MuiChartsAxis-root text': { fill: t.palette.text.primary },
-          '& .MuiChartsLegend-root': { color: t.palette.text.primary },
-        })}
-      />
-    </Box>
+    <div className={`chatbot-container ${className || ''}`}>
+      <Box sx={{ width: '100%', height: 400 }}>
+        <BarChart
+          series={[
+            // Les couleurs viennent du thème (cohérent clair/sombre)
+            { data: pData, label: 'pv', stack: 'stack1', color: theme.palette.primary.main },
+            { data: amtData, label: 'amt', color: theme.palette.error.main },
+            { data: uData, label: 'uv', stack: 'stack1', color: theme.palette.secondary.main },
+          ]}
+          xAxis={[{ data: xLabels }]}
+          yAxis={[{ width: 50 }]}
+          // Styles d’axes/légende pilotés par le thème
+          sx={(t) => ({
+            '& .MuiChartsAxis-root text': { fill: t.palette.text.primary },
+            '& .MuiChartsLegend-root': { color: t.palette.text.primary },
+          })}
+        />
+      </Box>
+    </div>
   );
 }
 

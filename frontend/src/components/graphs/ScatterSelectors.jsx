@@ -37,15 +37,17 @@ const series = [
   },
 ];
 
-export default function ScatterSelectors() {
+export default function ScatterSelectors({ className }) {
   return (
-    <ScatterChart
-      height={300}
-      voronoiMaxRadius={30}
-      series={series}
-      sx={{
-        '& [data-faded=true]': { opacity: 0.4 }
-      }}
-    />
+    <div className={`chatbot-container ${className || ''}`}>
+      <ScatterChart
+        height={300}
+        voronoiMaxRadius={30}
+        series={series}
+        sx={{
+          '& [data-faded=true]': { opacity: 0.4 }
+        }}
+      />
+    </div>
   );
 }

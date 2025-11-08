@@ -165,71 +165,73 @@ const votesTurnout = [
   { country: 'Denmark', turnout: 87 },
 ];
 
-export default function ShinyBarChartHorizontal() {
+export default function ShinyBarChartHorizontal({ className }) {
   const theme = useTheme();
 
   return (
-    <Box width="100%">
-      <Typography marginBottom={2}>
-        European countries with lowest & highest voter turnout
-      </Typography>
-      <BarChart
-        height={300}
-        dataset={votesTurnout}
-        series={[
-          {
-            id: 'turnout',
-            dataKey: 'turnout',
-            stack: 'voter turnout',
-            valueFormatter: (value) => `${value}%`,
-          },
-        ]}
-        layout="horizontal"
-        xAxis={[
-          {
-            id: 'color',
-            min: 0,
-            max: 100,
-            colorMap: {
-              type: 'piecewise',
-              thresholds: [50, 85],
-              // Couleurs issues du thème (plus de hex en dur)
-              colors: [
-                theme.palette.error.main,       // < 50% : "faible"
-                theme.palette.grey[500],        // entre 50 et 85 : "moyen"
-                theme.palette.primary.main,     // > 85% : "élevé"
-              ],
+    <div className={`chatbot-container ${className || ''}`}>
+      <Box width="100%">
+        <Typography marginBottom={2}>
+          European countries with lowest & highest voter turnout
+        </Typography>
+        <BarChart
+          height={300}
+          dataset={votesTurnout}
+          series={[
+            {
+              id: 'turnout',
+              dataKey: 'turnout',
+              stack: 'voter turnout',
+              valueFormatter: (value) => `${value}%`,
             },
-            valueFormatter: (value) => `${value}%`,
-          },
-        ]}
-        barLabel={(v) => `${v.value}%`}
-        yAxis={[
-          {
-            scaleType: 'band',
-            dataKey: 'country',
-            width: 140,
-          },
-        ]}
-        slots={{
-          legend: PiecewiseColorLegend,
-          barLabel: BarLabelAtBase,
-          bar: BarShadedBackground,
-        }}
-        slotProps={{
-          legend: {
-            axisDirection: 'x',
-            markType: 'square',
-            labelPosition: 'inline-start',
-            labelFormatter: ({ index }) => {
-              if (index === 0) return 'lowest turnout';
-              if (index === 1) return 'average';
-              return 'highest turnout';
+          ]}
+          layout="horizontal"
+          xAxis={[
+            {
+              id: 'color',
+              min: 0,
+              max: 100,
+              colorMap: {
+                type: 'piecewise',
+                thresholds: [50, 85],
+                // Couleurs issues du thème (plus de hex en dur)
+                colors: [
+                  theme.palette.error.main,       // < 50% : "faible"
+                  theme.palette.grey[500],        // entre 50 et 85 : "moyen"
+                  theme.palette.primary.main,     // > 85% : "élevé"
+                ],
+              },
+              valueFormatter: (value) => `${value}%`,
             },
-          },
-        }}
-      />
-    </Box>
+          ]}
+          barLabel={(v) => `${v.value}%`}
+          yAxis={[
+            {
+              scaleType: 'band',
+              dataKey: 'country',
+              width: 140,
+            },
+          ]}
+          slots={{
+            legend: PiecewiseColorLegend,
+            barLabel: BarLabelAtBase,
+            bar: BarShadedBackground,
+          }}
+          slotProps={{
+            legend: {
+              axisDirection: 'x',
+              markType: 'square',
+              labelPosition: 'inline-start',
+              labelFormatter: ({ index }) => {
+                if (index === 0) return 'lowest turnout';
+                if (index === 1) return 'average';
+                return 'highest turnout';
+              },
+            },
+          }}
+        />
+      </Box>
+    </div>
   );
 }
 

@@ -7,7 +7,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { useTheme } from '@mui/material/styles';
 
-export default function BarAnimation() {
+export default function BarAnimation({ className }) {
   const theme = useTheme();
   const [seriesNb, setSeriesNb] = React.useState(2);
   const [itemNb, setItemNb] = React.useState(5);
@@ -27,47 +27,49 @@ export default function BarAnimation() {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <BarChart
-        height={300}
-        series={series
-          .slice(0, seriesNb)
-          .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
-        skipAnimation={skipAnimation}
-        margin={{ left: 0 }}
-        
-      />
-      <FormControlLabel
-        checked={skipAnimation}
-        control={
-          <Checkbox onChange={(event) => setSkipAnimation(event.target.checked)} />
-        }
-        label="skipAnimation"
-        labelPlacement="end"
-      />
-      <Typography id="input-item-number" gutterBottom>
-        Number of items
-      </Typography>
-      <Slider
-        value={itemNb}
-        onChange={handleItemNbChange}
-        valueLabelDisplay="auto"
-        min={1}
-        max={20}
-        aria-labelledby="input-item-number"
-      />
-      <Typography id="input-series-number" gutterBottom>
-        Number of series
-      </Typography>
-      <Slider
-        value={seriesNb}
-        onChange={handleSeriesNbChange}
-        valueLabelDisplay="auto"
-        min={1}
-        max={10}
-        aria-labelledby="input-series-number"
-      />
-    </Box>
+    <div className={`chatbot-container ${className || ''}`}>
+      <Box sx={{ width: '100%' }}>
+        <BarChart
+          height={300}
+          series={series
+            .slice(0, seriesNb)
+            .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
+          skipAnimation={skipAnimation}
+          margin={{ left: 0 }}
+          
+        />
+        <FormControlLabel
+          checked={skipAnimation}
+          control={
+            <Checkbox onChange={(event) => setSkipAnimation(event.target.checked)} />
+          }
+          label="skipAnimation"
+          labelPlacement="end"
+        />
+        <Typography id="input-item-number" gutterBottom>
+          Number of items
+        </Typography>
+        <Slider
+          value={itemNb}
+          onChange={handleItemNbChange}
+          valueLabelDisplay="auto"
+          min={1}
+          max={20}
+          aria-labelledby="input-item-number"
+        />
+        <Typography id="input-series-number" gutterBottom>
+          Number of series
+        </Typography>
+        <Slider
+          value={seriesNb}
+          onChange={handleSeriesNbChange}
+          valueLabelDisplay="auto"
+          min={1}
+          max={10}
+          aria-labelledby="input-series-number"
+        />
+      </Box>
+    </div>
   );
 }
 
