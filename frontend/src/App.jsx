@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Dock from './components/Dock'
 import { VscHome, VscArchive, VscAccount, VscSettingsGear } from 'react-icons/vsc'
@@ -361,35 +361,58 @@ export default function App() {
         <div class="colorBlock chatBot">
           <MessageBox></MessageBox>
         </div>
+
         <div className="colorBlock paragraph reveal">
           <p>The International Skating Union (ISU) is the international governing body for competitive ice skating disciplines, including figure skating, synchronized skating, speed skating, and short track speed skating.[8] It was founded in Scheveningen, Netherlands, in July 1892,[2] making it one of the oldest international sport federations. The ISU was formed to establish standardized international rules and regulations for the skating disciplines it governs, and to organize international competitions in these disciplines. It is now based in Switzerland.</p>
         </div>
-        <div class="colorBlock">
+
+        <div class="colorBlock graph">
           <AppThemeProvider mode="dark">
             <BarChart className="reveal"></BarChart>
+          </AppThemeProvider>
+        </div>
+        <div class="colorBlock graph">
+          <AppThemeProvider mode="dark">
             <BarGraphHorizontal className="reveal"></BarGraphHorizontal>
           </AppThemeProvider>
         </div>
+
         <div className="colorBlock paragraph reveal">
           <p>The International Skating Union (ISU)[b] was founded in 1892[10] in the Dutch seaside town of Scheveningen.[9] The meeting was attended by 15 men, as the national association representatives from the Netherlands, Great Britain, Germany/Austria, and two clubs from Stockholm (Sweden) and Budapest (Hungary).[9][11] The ISU was the first international winter sports federation[9] to govern speed skating and figure skating,[12][13] as it laid down the rules for speed skating, shortly followed by figure skating.[9] In 1895, the organization streamlined its mission to deal only with amateur competitors, not professionals, and hosted its first amateur skating championship in February 1896 in St. Petersburg, Russia.[14]</p>
         </div>
-        <div class="colorBlock">
+
+        <div class="colorBlock graph">
           <AppThemeProvider mode="dark">
             <BarAnimation className="reveal"></BarAnimation>
+          </AppThemeProvider>
+        </div>
+        <div class="colorBlock graph">
+          <AppThemeProvider mode="dark">
             <DifferentLength className="reveal"></DifferentLength>
           </AppThemeProvider>
         </div>
+
         <div className="colorBlock paragraph reveal">
           <p>The United States and Canada formed a competing organization, the International Skating Union of America (ISUA), in 1907.[15][16] Over the next two years, 12 European nations had joined the ISU, while the ISUA had only its original two members.[17] The ISUA folded in 1927.[18]</p>
           <p>European and North American figure skaters rarely competed against each other because of differences in their styles of skating.[19] The ISU had "systematized and arranged" the sport of figure skating,[19] with competitions including "a selection of ten or twelve numbers from the ISU programme, ... five minutes' free skating to music, ... [and] special figures" on one foot.[17] According to figure skating historian James R. Hines, the ISU was formed due to the necessity of establishing a schedule of compulsory figures and to adopt the international style of figure skating used outside of North America and Great Britain.[20] In 1911, Canada joined the ISU, leaving the United States as the only major competitor to not be a member.[19] This changed in 1923, when the United States Figure Skating Association joined the ISU[21] and in 1926, the Japanese sport governing body followed to acquire ISU membership.[22]</p>
         </div>
-        <div class="colorBlock">
+
+        <div class="colorBlock graph">
           <AppThemeProvider mode="dark">
             <BasicPie className="reveal"></BasicPie>
+          </AppThemeProvider>
+        </div>
+        <div class="colorBlock graph">
+          <AppThemeProvider mode="dark">
             <Scatter className="reveal"></Scatter>
+          </AppThemeProvider>
+        </div>
+        <div class="colorBlock graph">
+          <AppThemeProvider mode="dark">
             <ScatterRegressionLine className="reveal"></ScatterRegressionLine>
           </AppThemeProvider>
         </div>
+        <div className="footer"></div>
       {/* <h1>Frontend Vite ⚡</h1>
       <button onClick={fetchMessage}>Parle moi backend !</button>
       {message && <p>{message}</p>}

@@ -1,58 +1,86 @@
-import { useState } from "react";
+import { useEffect, useState, useRef, setBoxWidth } from "react";
 import "./MessageBox.css";
 
 
-export default function MessageBox() {
+export default function MessageBox({ pinAtPx = 1000 }) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
+  const boxRef = useRef(null);
+  const [pinned, setPinned] = useState(false);
+  const [boxWidth, setBoxWidth] = useState(null);
+
+  // Pin quand on dépasse pinAtPx pixels de scroll
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.pageYOffset || document.documentElement.scrollTop;
+      setPinned(y >= pinAtPx);
+    };
+    onScroll(); // état correct au chargement
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pinAtPx]);
+
+  // Mesure la largeur quand pas pinned
+  useEffect(() => {
+    if (!pinned && boxRef.current) {
+      setBoxWidth(boxRef.current.getBoundingClientRect().width);
+    }
+  }, [pinned]);
 
   return (
-    <div class="messageBox">
-      <div class="fileUploadWrapper">
-        <label for="file">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 337 337">
-            <circle
-              stroke-width="20"
-              stroke="#6c6c6c"
-              fill="none"
-              r="158.5"
-              cy="168.5"
-              cx="168.5"
-            ></circle>
+    <>
+      {pinned && <div className="messageBoxSpacer"></div>} 
+      <div
+        ref={boxRef}
+        className={`messageBox ${pinned ? "pinned" : ""}`}
+        style={pinned ? { width: boxWidth } : {}}
+      >
+        <div class="fileUploadWrapper">
+          <label for="file">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 337 337">
+              <circle
+                stroke-width="20"
+                stroke="#6c6c6c"
+                fill="none"
+                r="158.5"
+                cy="168.5"
+                cx="168.5"
+              ></circle>
+              <path
+                stroke-linecap="round"
+                stroke-width="25"
+                stroke="#6c6c6c"
+                d="M167.759 79V259"
+              ></path>
+              <path
+                stroke-linecap="round"
+                stroke-width="25"
+                stroke="#6c6c6c"
+                d="M79 167.138H259"
+              ></path>
+            </svg>
+            <span class="tooltip">Add an image</span>
+          </label>
+          <input type="file" id="file" name="file" />
+        </div>
+        <input required="" placeholder="Ask something about Speed Skating..." type="text" id="messageInput" />
+        <button id="sendButton">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
             <path
-              stroke-linecap="round"
-              stroke-width="25"
-              stroke="#6c6c6c"
-              d="M167.759 79V259"
+              fill="none"
+              d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
             ></path>
             <path
+              stroke-linejoin="round"
               stroke-linecap="round"
-              stroke-width="25"
+              stroke-width="33.67"
               stroke="#6c6c6c"
-              d="M79 167.138H259"
+              d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
             ></path>
           </svg>
-          <span class="tooltip">Add an image</span>
-        </label>
-        <input type="file" id="file" name="file" />
+        </button>
       </div>
-      <input required="" placeholder="Ask something about Speed Skating..." type="text" id="messageInput" />
-      <button id="sendButton">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
-          <path
-            fill="none"
-            d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
-          ></path>
-          <path
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            stroke-width="33.67"
-            stroke="#6c6c6c"
-            d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
-          ></path>
-        </svg>
-      </button>
-    </div>
+    </>
 
   );
 }

@@ -8,7 +8,24 @@
   padding: 0 15px;
   border-radius: 10px;
   border: 1px solid rgb(63, 63, 63);
+
+  z-index: 1;
+  position: static;
 }
+.messageBox.pinned {
+  /* display: block; */
+  position: fixed;
+  width: 50%;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.messageBoxSpacer {
+  height: 40px; 
+}
+
 .messageBox:hover,
 .messageBox:focus {
   border: 2px solid #ffffff;
