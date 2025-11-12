@@ -1,0 +1,77 @@
+{
+  "fingerprint": "92ac51bdd20a30221af9f17d1c47dca2",
+  "urls": [
+    "https://lilianweng.github.io/posts/2023-06-23-agent/",
+    "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+    "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/"
+  ],
+  "files_glob": "data/**/*.txt",
+  "files_sig": [
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_0.txt",
+      "size": 564,
+      "mtime_ns": 1761921383698039651
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_1.txt",
+      "size": 6335,
+      "mtime_ns": 1761921383698576212
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_10.txt",
+      "size": 6093,
+      "mtime_ns": 1761921383702543139
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_2.txt",
+      "size": 6956,
+      "mtime_ns": 1761921383699061632
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_3.txt",
+      "size": 6105,
+      "mtime_ns": 1761921383699551463
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_4.txt",
+      "size": 6378,
+      "mtime_ns": 1761921383700036883
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_5.txt",
+      "size": 7172,
+      "mtime_ns": 1761921383700713158
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_6.txt",
+      "size": 3581,
+      "mtime_ns": 1761921383700958729
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_7.txt",
+      "size": 592,
+      "mtime_ns": 1761921383701131821
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_8.txt",
+      "size": 6142,
+      "mtime_ns": 1761921383701611876
+    },
+    {
+      "path": "/Users/louiskerguillec/Documents/GitHub/athletes-insights/backend/rag-article-generator/data/content_9.txt",
+      "size": 5522,
+      "mtime_ns": 1761921383702080250
+    }
+  ],
+  "chunk_size": 1000,
+  "chunk_overlap": 200,
+  "backend": "faiss",
+  "use_urls": true,
+  "use_files": true,
+  "counts": {
+    "urls": 3,
+    "files": 11,
+    "sources": 11,
+    "chunks": 21
+  }
+}

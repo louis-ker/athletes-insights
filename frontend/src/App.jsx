@@ -23,6 +23,9 @@ import BasicPie from './components/graphs/BasicPie.jsx';
 import Scatter from "./components/graphs/ScatterSelectors.jsx";
 import ScatterRegressionLine from './components/graphs/ScatterRegressionLine.jsx';
 import ScrollReveal from 'scrollreveal';
+import GeneratedCanva from './components/GeneratedCanva.jsx';
+import GeneratedGraph from './components/GeneratedGraph.jsx';
+import GraphsFromResponse from './components/GraphsFromResponse';
 
 const Page = styled.div`
   width: 100vw;
@@ -265,6 +268,7 @@ export const hyperspeedPresets = {
 // ======================= MAIN =======================
 export default function App() {
   const [message, setMessage] = useState('');
+  const [responseData, setResponseData] = useState(null);
 
   const fetchMessage = async () => {
     try {
@@ -294,9 +298,12 @@ export default function App() {
     });
   }, []);
 
+  console.log("App state:", responseData);
+  
+
   return (
     <Page>
-        <img className="reveal" src={speedSkatersImage} alt="Description de l'image" />
+        <img src={speedSkatersImage} alt="Description de l'image" />
         <Hyperspeed
           effectOptions={{
             onSpeedUp: () => { },
@@ -359,9 +366,17 @@ export default function App() {
           }}
         />
         <div class="colorBlock chatBot">
-          <MessageBox></MessageBox>
+          <MessageBox setResponseData={setResponseData} ></MessageBox>
         </div>
-
+        <div className="colorBlock paragraph reveal">
+          <GeneratedCanva data={responseData} />
+        </div>
+        <div className="colorBlock paragraph reveal">
+          <GraphsFromResponse responseData={responseData} />
+        </div>
+        {/* <div className="colorBlock paragraph reveal">
+          <GeneratedGraph></GeneratedGraph>
+        </div> */}
         <div className="colorBlock paragraph reveal">
           <p>The International Skating Union (ISU) is the international governing body for competitive ice skating disciplines, including figure skating, synchronized skating, speed skating, and short track speed skating.[8] It was founded in Scheveningen, Netherlands, in July 1892,[2] making it one of the oldest international sport federations. The ISU was formed to establish standardized international rules and regulations for the skating disciplines it governs, and to organize international competitions in these disciplines. It is now based in Switzerland.</p>
         </div>

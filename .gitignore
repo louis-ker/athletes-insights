@@ -3,6 +3,7 @@
 /backend/.venv
 # Variables environnement
 /backend/.env
+/backend/rag-article-generator/.env
 __pycache__
 
 # FRONTEND

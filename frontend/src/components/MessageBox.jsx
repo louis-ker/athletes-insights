@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, setBoxWidth } from "react";
 import "./MessageBox.css";
 
 
-export default function MessageBox({ pinAtPx = 1000 }) {
+export default function MessageBox({ pinAtPx = 1000, setResponseData}) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const boxRef = useRef(null);
@@ -26,6 +26,31 @@ export default function MessageBox({ pinAtPx = 1000 }) {
       setBoxWidth(boxRef.current.getBoundingClientRect().width);
     }
   }, [pinned]);
+
+  async function handleSend() {
+    const q = message.trim();
+    if (!q) return;
+    // https://athletes-insights-backend.onrender.com/api/ask
+    // http://localhost:4000/api/run
+    try {
+      const response = await fetch("https://athletes-insights-backend.onrender.com/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q })
+      });
+
+      const data = await response.json();
+      console.log("Réponse backend :", data);
+
+      // 🔧 remonter aussi la question initiale (fallback)
+      setResponseData({ ...data, _originalQuestion: q });
+
+    } catch (err) {
+      console.error("Erreur d'envoi :", err);
+    }
+
+    setMessage("");
+  }
 
   return (
     <>
@@ -63,8 +88,13 @@ export default function MessageBox({ pinAtPx = 1000 }) {
           </label>
           <input type="file" id="file" name="file" />
         </div>
-        <input required="" placeholder="Ask something about Speed Skating..." type="text" id="messageInput" />
-        <button id="sendButton">
+        <input value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+          placeholder="Ask something about Speed Skating..."
+          type="text"
+          id="messageInput" />
+        <button id="sendButton" onClick={handleSend}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
             <path
               fill="none"
