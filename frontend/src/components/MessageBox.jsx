@@ -30,7 +30,9 @@ export default function MessageBox({ pinAtPx = 1000, setResponseData}) {
   async function handleSend() {
     const q = message.trim();
     if (!q) return;
+    // Render :
     // https://athletes-insights-backend.onrender.com/api/ask
+    // Local :
     // http://localhost:4000/api/run
     try {
       const response = await fetch("https://athletes-insights-backend.onrender.com/api/ask", {
