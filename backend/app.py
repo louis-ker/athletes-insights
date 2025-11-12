@@ -12,50 +12,9 @@ from subprocess import Popen, PIPE
 app = Flask(__name__)
 CORS(app)
 
-# @app.route("/api/ask", methods=["POST"])
-# def ask():
-#     data = request.get_json()
-#     question = data.get("question")
-#     session_id = data.get("session_id", "default")
-
-#     result = ask_ragflow(question, session_id)
-#     return jsonify(result)
-
 @app.route("/api/hello", methods=["GET"])
 def hello():
     return {"message": "Hello from Flask!"}
-
-
-# @app.route("/api/run", methods=["POST"])
-# def run_script():
-#     data = request.json
-#     question = data.get("question")
-
-#     result = subprocess.run(
-#         ["python", "main.py", "--no-web-search", "-q", question],
-#         capture_output=True,
-#         text=True,
-#         cwd="rag-article-generator"
-#     )
-
-#     stdout = result.stdout
-
-#     try:
-#         # 🔧 Utiliser rindex pour capter le DERNIER bloc JSON produit
-#         start_marker = "===CANVA_JSON_START==="
-#         end_marker = "===CANVA_JSON_END==="
-#         start = stdout.rindex(start_marker) + len(start_marker)
-#         end = stdout.rindex(end_marker)
-#         raw_json = stdout[start:end].strip()
-#         canva = json.loads(raw_json)
-#         return jsonify(canva)
-
-#     except Exception as e:
-#         return jsonify({
-#             "error": "Impossible d'extraire le JSON",
-#             "stdout": stdout,
-#             "exception": str(e)
-#         }), 500
 
 # Local :
 # @app.route("/api/run", methods=["POST"])

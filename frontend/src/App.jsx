@@ -26,6 +26,7 @@ import ScrollReveal from 'scrollreveal';
 import GeneratedCanva from './components/GeneratedCanva.jsx';
 import GeneratedGraph from './components/GeneratedGraph.jsx';
 import GraphsFromResponse from './components/GraphsFromResponse';
+import DownButton from './components/DownButton.jsx';
 
 const Page = styled.div`
   width: 100vw;
@@ -304,6 +305,7 @@ export default function App() {
   return (
     <Page>
         <img src={speedSkatersImage} alt="Description de l'image" />
+        <DownButton></DownButton>
         <Hyperspeed
           effectOptions={{
             onSpeedUp: () => { },
@@ -365,7 +367,7 @@ export default function App() {
             }
           }}
         />
-        <div class="colorBlock chatBot">
+        <div id="chatbot" class="colorBlock chatBot">
           <MessageBox setResponseData={setResponseData} ></MessageBox>
         </div>
         <div className="colorBlock paragraph reveal">
