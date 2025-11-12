@@ -110,6 +110,8 @@ def run_script():
         return jsonify({
             "error": "Impossible d'extraire le JSON",
             "stdout": stdout[-4000:],   # on tronque pour ne pas noyer le front
+            "stderr": result.stderr[-4000:],
+            "returncode": result.returncode,
             "exception": str(e)
         }), 500
 
