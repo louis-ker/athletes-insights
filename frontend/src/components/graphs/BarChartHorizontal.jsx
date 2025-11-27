@@ -3,294 +3,179 @@
 // import Typography from '@mui/material/Typography';
 // import { BarChart } from '@mui/x-charts/BarChart';
 // import { useAnimate, useAnimateBar, useDrawingArea } from '@mui/x-charts/hooks';
-// import { PiecewiseColorLegend } from '@mui/x-charts/ChartsLegend';
 // import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
 // import Box from '@mui/material/Box';
 
-// const votesTurnout = [
-//   { country: 'Slovakia', turnout: 43 },
-//   { country: 'Romania', turnout: 51 },
-//   { country: 'Lithuania', turnout: 52 },
-//   { country: 'Croatia', turnout: 54 },
-//   { country: 'Belgium', turnout: 89 },
-//   { country: 'Italy', turnout: 71 },
-//   { country: 'Sweden', turnout: 75 },
-//   { country: 'Denmark', turnout: 87 },
+// const athleteStats = [
+//   { athlete: 'Yang Yang (A)', wins: 6, runnerUps: 1, thirds: 1 },
+//   { athlete: 'Sylvie Daigle', wins: 5, runnerUps: 3, thirds: 0 },
+//   { athlete: 'Choi Min-jeong', wins: 4, runnerUps: 1, thirds: 1 },
+//   { athlete: 'Nathalie Lambert', wins: 3, runnerUps: 2, thirds: 0 },
+//   { athlete: 'Chun Lee-kyung', wins: 3, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Jin Sun-yu', wins: 3, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Wang Meng', wins: 3, runnerUps: 2, thirds: 1 },
+//   { athlete: 'Miyoshi Kato', wins: 2, runnerUps: 2, thirds: 1 },
+//   { athlete: 'Eiko Shishii', wins: 2, runnerUps: 1, thirds: 1 },
+//   { athlete: 'Bonnie Blair', wins: 2, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Choi Eun-kyung', wins: 2, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Suzanne Schulting', wins: 2, runnerUps: 0, thirds: 0 },
+//   { athlete: 'Maryse Perreault', wins: 1, runnerUps: 3, thirds: 2 },
+//   { athlete: 'Mariko Kinoshita', wins: 1, runnerUps: 0, thirds: 1 },
+//   { athlete: 'Kim So-hee', wins: 1, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Park Seung-hi', wins: 1, runnerUps: 2, thirds: 1 },
+//   { athlete: 'Cho Ha-ri', wins: 1, runnerUps: 0, thirds: 0 },
+//   { athlete: 'Li Jianrou', wins: 1, runnerUps: 0, thirds: 0 },
+//   { athlete: 'Shim Suk-hee', wins: 1, runnerUps: 3, thirds: 2 },
+//   { athlete: 'Elise Christie', wins: 1, runnerUps: 0, thirds: 0 },
+//   { athlete: 'Yang Yang (S)', wins: 0, runnerUps: 2, thirds: 2 },
+//   { athlete: 'Mika Kato', wins: 0, runnerUps: 3, thirds: 0 },
+//   { athlete: 'Wang Chunlu', wins: 0, runnerUps: 2, thirds: 0 },
+//   { athlete: 'Valérie Maltais', wins: 0, runnerUps: 2, thirds: 0 },
+//   { athlete: 'Arianna Fontana', wins: 0, runnerUps: 1, thirds: 2 },
+//   { athlete: 'Kalyna Roberge', wins: 0, runnerUps: 0, thirds: 2 },
+//   { athlete: 'Kim Boutin', wins: 0, runnerUps: 2, thirds: 0 },
+//   { athlete: 'Zhou Yang', wins: 0, runnerUps: 1, thirds: 2 },
+//   { athlete: 'Byun Chun-sa', wins: 0, runnerUps: 0, thirds: 1 },
+//   { athlete: 'Ko Gi-hyun', wins: 0, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Yumiko Yamada', wins: 0, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Yang Shin-young', wins: 0, runnerUps: 0, thirds: 1 },
+//   { athlete: 'Courtney Sarault', wins: 0, runnerUps: 1, thirds: 0 },
+//   { athlete: 'Xandra Velzeboer', wins: 0, runnerUps: 0, thirds: 1 },
 // ];
 
-// export default function ShinyBarChartHorizontal() {
-//   return (
-//     <Box width="100%">
-//       <Typography marginBottom={2}>
-//         European countries with lowest & highest voter turnout
-//       </Typography>
-//       <BarChart
-//         height={300}
-//         dataset={votesTurnout}
-//         series={[
-//           {
-//             id: 'turnout',
-//             dataKey: 'turnout',
-//             stack: 'voter turnout',
-//             valueFormatter: (value) => `${value}%`,
-//           },
-//         ]}
-//         layout="horizontal"
-//         xAxis={[
-//           {
-//             id: 'color',
-//             min: 0,
-//             max: 100,
-//             colorMap: {
-//               type: 'piecewise',
-//               thresholds: [50, 85],
-//               colors: ['#d32f2f', '#78909c', '#1976d2'],
-//             },
-//             valueFormatter: (value) => `${value}%`,
-//           },
-//         ]}
-//         barLabel={(v) => `${v.value}%`}
-//         yAxis={[
-//           {
-//             scaleType: 'band',
-//             dataKey: 'country',
-//             width: 140,
-//           },
-//         ]}
-//         slots={{
-//           legend: PiecewiseColorLegend,
-//           barLabel: BarLabelAtBase,
-//           bar: BarShadedBackground,
-//         }}
-//         slotProps={{
-//           legend: {
-//             axisDirection: 'x',
-//             markType: 'square',
-//             labelPosition: 'inline-start',
-//             labelFormatter: ({ index }) => {
-//               if (index === 0) return 'lowest turnout';
-//               if (index === 1) return 'average';
-//               return 'highest turnout';
-//             },
-//           },
-//         }}
-//       />
-//     </Box>
-//   );
-// }
-
-// export function BarShadedBackground(props) {
-//   const { ownerState, skipAnimation, id, dataIndex, xOrigin, yOrigin, ...other } =
-//     props;
+// export default function BarChartHorizontal({ className }) {
 //   const theme = useTheme();
 
-//   const animatedProps = useAnimateBar(props);
-//   const { width } = useDrawingArea();
 //   return (
-//     <React.Fragment>
-//       <rect
-//         {...other}
-//         fill={(theme.vars || theme).palette.text.primary}
-//         opacity={theme.palette.mode === 'dark' ? 0.05 : 0.1}
-//         x={other.x}
-//         width={width}
-//       />
-//       <rect
-//         {...other}
-//         filter={ownerState.isHighlighted ? 'brightness(120%)' : undefined}
-//         opacity={ownerState.isFaded ? 0.3 : 1}
-//         data-highlighted={ownerState.isHighlighted || undefined}
-//         data-faded={ownerState.isFaded || undefined}
-//         {...animatedProps}
-//       />
-//     </React.Fragment>
+//     <div className={`chatbot-container ${className || ''}`}>
+//       <Box
+//         sx={{
+//           width: '100%',
+//           aspectRatio: '16 / 9',   // ⭐ RATIO DYNAMIQUE
+//           maxHeight: '100%',       // évite les débordements
+//           // overflow: 'hidden',
+//         }}
+//       >
+//         <Typography marginBottom={2}>
+//           Palmarès des athlètes (🥇 Wins / 🥈 Runner-up / 🥉 Third)
+//         </Typography>
+//         <BarChart
+//           height={900}
+//           dataset={athleteStats}
+//           series={[
+//             { dataKey: 'wins', label: '🥇 Winner', color: '#ffc800ff' },
+//             { dataKey: 'runnerUps', label: '🥈 Runner-up', color: '#405b50ff' },
+//             { dataKey: 'thirds', label: '🥉 Third', color: '#903c00ff' },
+//           ]}
+//           layout="horizontal"
+//           xAxis={[{ label: 'Number of podiums',
+//                     valueFormatter: (v) => `${v}`,
+//           }]}
+//           yAxis={[{ scaleType: 'band', dataKey: 'athlete', width: 180 }]}
+//         />
+//       </Box>
+//     </div>
 //   );
 // }
 
-// const Text = styled('text')(({ theme }) => ({
-//   ...theme?.typography?.body2,
-//   stroke: 'none',
-//   fill: (theme.vars || theme).palette.common.white,
-//   transition: 'opacity 0.2s ease-in, fill 0.2s ease-in',
-//   textAnchor: 'start',
-//   dominantBaseline: 'central',
-//   pointerEvents: 'none',
-//   fontWeight: 600,
-// }));
-
-// function BarLabelAtBase(props) {
-//   const {
-//     xOrigin,
-//     y,
-//     height,
-//     skipAnimation,
-//     ...otherProps
-//   } = props;
-
-//   const animatedProps = useAnimate(
-//     { x: xOrigin + 8, y: y + height / 2 },
-//     {
-//       initialProps: { x: xOrigin, y: y + height / 2 },
-//       createInterpolator: interpolateObject,
-//       transformProps: (p) => p,
-//       applyProps: (element, p) => {
-//         element.setAttribute('x', p.x.toString());
-//         element.setAttribute('y', p.y.toString());
-//       },
-//       skip: skipAnimation,
-//     }
-//   );
-
-//   return <Text {...otherProps} {...animatedProps} />;
-// }
-
-// BarChartHorizontal.jsx
 import * as React from 'react';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { useAnimate, useAnimateBar, useDrawingArea } from '@mui/x-charts/hooks';
-import { PiecewiseColorLegend } from '@mui/x-charts/ChartsLegend';
-import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
 import Box from '@mui/material/Box';
 
-const votesTurnout = [
-  { country: 'Slovakia', turnout: 43 },
-  { country: 'Romania', turnout: 51 },
-  { country: 'Lithuania', turnout: 52 },
-  { country: 'Croatia', turnout: 54 },
-  { country: 'Belgium', turnout: 89 },
-  { country: 'Italy', turnout: 71 },
-  { country: 'Sweden', turnout: 75 },
-  { country: 'Denmark', turnout: 87 },
+const athleteStats = [
+  { athlete: 'Yang Yang (A)', wins: 6, runnerUps: 1, thirds: 1 },
+  { athlete: 'Sylvie Daigle', wins: 5, runnerUps: 3, thirds: 0 },
+  { athlete: 'Choi Min-jeong', wins: 4, runnerUps: 1, thirds: 1 },
+  { athlete: 'Nathalie Lambert', wins: 3, runnerUps: 2, thirds: 0 },
+  { athlete: 'Chun Lee-kyung', wins: 3, runnerUps: 1, thirds: 0 },
+  { athlete: 'Jin Sun-yu', wins: 3, runnerUps: 1, thirds: 0 },
+  { athlete: 'Wang Meng', wins: 3, runnerUps: 2, thirds: 1 },
+  { athlete: 'Miyoshi Kato', wins: 2, runnerUps: 2, thirds: 1 },
+  { athlete: 'Eiko Shishii', wins: 2, runnerUps: 1, thirds: 1 },
+  { athlete: 'Bonnie Blair', wins: 2, runnerUps: 1, thirds: 0 },
+  { athlete: 'Choi Eun-kyung', wins: 2, runnerUps: 1, thirds: 0 },
+  { athlete: 'Suzanne Schulting', wins: 2, runnerUps: 0, thirds: 0 },
+  { athlete: 'Maryse Perreault', wins: 1, runnerUps: 3, thirds: 2 },
+  { athlete: 'Mariko Kinoshita', wins: 1, runnerUps: 0, thirds: 1 },
+  { athlete: 'Kim So-hee', wins: 1, runnerUps: 1, thirds: 0 },
+  { athlete: 'Park Seung-hi', wins: 1, runnerUps: 2, thirds: 1 },
+  { athlete: 'Cho Ha-ri', wins: 1, runnerUps: 0, thirds: 0 },
+  { athlete: 'Li Jianrou', wins: 1, runnerUps: 0, thirds: 0 },
+  { athlete: 'Shim Suk-hee', wins: 1, runnerUps: 3, thirds: 2 },
+  { athlete: 'Elise Christie', wins: 1, runnerUps: 0, thirds: 0 },
+  { athlete: 'Yang Yang (S)', wins: 0, runnerUps: 2, thirds: 2 },
+  { athlete: 'Mika Kato', wins: 0, runnerUps: 3, thirds: 0 },
+  { athlete: 'Wang Chunlu', wins: 0, runnerUps: 2, thirds: 0 },
+  { athlete: 'Valérie Maltais', wins: 0, runnerUps: 2, thirds: 0 },
+  { athlete: 'Arianna Fontana', wins: 0, runnerUps: 1, thirds: 2 },
+  { athlete: 'Kalyna Roberge', wins: 0, runnerUps: 0, thirds: 2 },
+  { athlete: 'Kim Boutin', wins: 0, runnerUps: 2, thirds: 0 },
+  { athlete: 'Zhou Yang', wins: 0, runnerUps: 1, thirds: 2 },
+  { athlete: 'Byun Chun-sa', wins: 0, runnerUps: 0, thirds: 1 },
+  { athlete: 'Ko Gi-hyun', wins: 0, runnerUps: 1, thirds: 0 },
+  { athlete: 'Yumiko Yamada', wins: 0, runnerUps: 1, thirds: 0 },
+  { athlete: 'Yang Shin-young', wins: 0, runnerUps: 0, thirds: 1 },
+  { athlete: 'Courtney Sarault', wins: 0, runnerUps: 1, thirds: 0 },
+  { athlete: 'Xandra Velzeboer', wins: 0, runnerUps: 0, thirds: 1 },
 ];
 
-export default function ShinyBarChartHorizontal({ className }) {
+export default function BarChartHorizontal({ className }) {
   const theme = useTheme();
 
   return (
-    <div className={`chatbot-container ${className || ''}`}>
-      <Box width="100%">
-        <Typography marginBottom={2}>
-          European countries with lowest & highest voter turnout
-        </Typography>
+    <div
+      className={`chatbot-container ${className || ''}`}
+      style={{
+        width: '100%',
+        height: '100%',              // 🟢 occupe toute la hauteur du container
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Typography
+        marginBottom={2}
+        sx={{
+          color: theme.palette.text.primary,
+          flexShrink: 0,            // 🟢 ne se fait pas écraser par le graphe
+          fontWeight: 500,
+        }}
+      >
+        Palmarès des athlètes (🥇 Wins / 🥈 Runner-up / 🥉 Third)
+      </Typography>
+
+      {/* Zone du graphe qui prend tout l'espace restant */}
+      <Box
+        sx={{
+          flex: 1,                  // 🟢 prend tout l'espace restant
+          minHeight: 0,
+          width: '100%',
+        }}
+      >
         <BarChart
-          height={300}
-          dataset={votesTurnout}
+          dataset={athleteStats}
           series={[
-            {
-              id: 'turnout',
-              dataKey: 'turnout',
-              stack: 'voter turnout',
-              valueFormatter: (value) => `${value}%`,
-            },
+            { dataKey: 'wins',      label: '🥇 Winner',    color: '#ffc800ff' },
+            { dataKey: 'runnerUps', label: '🥈 Runner-up', color: '#405b50ff' },
+            { dataKey: 'thirds',    label: '🥉 Third',     color: '#903c00ff' },
           ]}
           layout="horizontal"
           xAxis={[
             {
-              id: 'color',
-              min: 0,
-              max: 100,
-              colorMap: {
-                type: 'piecewise',
-                thresholds: [50, 85],
-                // Couleurs issues du thème (plus de hex en dur)
-                colors: [
-                  theme.palette.error.main,       // < 50% : "faible"
-                  theme.palette.grey[500],        // entre 50 et 85 : "moyen"
-                  theme.palette.primary.main,     // > 85% : "élevé"
-                ],
-              },
-              valueFormatter: (value) => `${value}%`,
+              label: 'Number of podiums',
+              valueFormatter: (v) => `${v}`,
             },
           ]}
-          barLabel={(v) => `${v.value}%`}
           yAxis={[
             {
               scaleType: 'band',
-              dataKey: 'country',
-              width: 140,
+              dataKey: 'athlete',
+              width: 180,
             },
           ]}
-          slots={{
-            legend: PiecewiseColorLegend,
-            barLabel: BarLabelAtBase,
-            bar: BarShadedBackground,
-          }}
-          slotProps={{
-            legend: {
-              axisDirection: 'x',
-              markType: 'square',
-              labelPosition: 'inline-start',
-              labelFormatter: ({ index }) => {
-                if (index === 0) return 'lowest turnout';
-                if (index === 1) return 'average';
-                return 'highest turnout';
-              },
-            },
-          }}
         />
       </Box>
     </div>
   );
-}
-
-export function BarShadedBackground(props) {
-  const { ownerState, skipAnimation, id, dataIndex, xOrigin, yOrigin, ...other } =
-    props;
-  const theme = useTheme();
-
-  const animatedProps = useAnimateBar(props);
-  const { width } = useDrawingArea();
-  return (
-    <React.Fragment>
-      {/* fond d'aide à la lecture → couleur texte (thème) + opacité selon mode */}
-      <rect
-        {...other}
-        fill={(theme.vars || theme).palette.text.primary}
-        opacity={theme.palette.mode === 'dark' ? 0.05 : 0.1}
-        x={other.x}
-        width={width}
-      />
-      <rect
-        {...other}
-        filter={ownerState.isHighlighted ? 'brightness(120%)' : undefined}
-        opacity={ownerState.isFaded ? 0.3 : 1}
-        data-highlighted={ownerState.isHighlighted || undefined}
-        data-faded={ownerState.isFaded || undefined}
-        {...animatedProps}
-      />
-    </React.Fragment>
-  );
-}
-
-const Text = styled('text')(({ theme }) => ({
-  ...theme?.typography?.body2,
-  stroke: 'none',
-  fill: (theme.vars || theme).palette.common.white, // lisible sur les barres
-  transition: 'opacity 0.2s ease-in, fill 0.2s ease-in',
-  textAnchor: 'start',
-  dominantBaseline: 'central',
-  pointerEvents: 'none',
-  fontWeight: 600,
-}));
-
-function BarLabelAtBase(props) {
-  const { xOrigin, y, height, skipAnimation, ...otherProps } = props;
-
-  const animatedProps = useAnimate(
-    { x: xOrigin + 8, y: y + height / 2 },
-    {
-      initialProps: { x: xOrigin, y: y + height / 2 },
-      createInterpolator: interpolateObject,
-      transformProps: (p) => p,
-      applyProps: (element, p) => {
-        element.setAttribute('x', p.x.toString());
-        element.setAttribute('y', p.y.toString());
-      },
-      skip: skipAnimation,
-    }
-  );
-
-  return <Text {...otherProps} {...animatedProps} />;
 }

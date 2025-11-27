@@ -7,10 +7,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.5",
     "@mui/x-charts": "^8.17.0",
+    "d3": "^7.9.0",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.554.0",
     "motion": "^12.23.24",
     "postprocessing": "^6.37.8",
     "react": "^18.0.0",
@@ -18,14 +24,25 @@
     "react-icons": "^5.5.0",
     "react-live": "^4.1.8",
     "react-loading-indicators": "^1.0.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.6",
     "react-spinners": "^0.17.0",
     "recharts": "^3.4.1",
+    "remark-gfm": "^4.0.1",
     "scrollreveal": "^4.0.9",
     "styled-components": "^6.1.19",
-    "three": "^0.180.0"
+    "three": "^0.180.0",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3",
     "vite": "^5.0.0"
   }
 }

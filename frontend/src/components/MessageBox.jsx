@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, setBoxWidth } from "react";
 import "./MessageBox.css";
 
 
-export default function MessageBox({ pinAtPx = 1000, setResponseData}) {
+export default function MessageBox({ pinAtPx = 1000, setResponseData, setIsLoading}) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const boxRef = useRef(null);
@@ -30,6 +30,8 @@ export default function MessageBox({ pinAtPx = 1000, setResponseData}) {
   async function handleSend() {
     const q = message.trim();
     if (!q) return;
+
+    setIsLoading?.(true);
     // Render :
     // https://athletes-insights-backend.onrender.com/api/ask
     // Local :
@@ -49,6 +51,8 @@ export default function MessageBox({ pinAtPx = 1000, setResponseData}) {
 
     } catch (err) {
       console.error("Erreur d'envoi :", err);
+    } finally {
+      setIsLoading?.(false);
     }
 
     setMessage("");

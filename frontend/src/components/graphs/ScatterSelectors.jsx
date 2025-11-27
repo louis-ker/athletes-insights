@@ -1,3 +1,58 @@
+// import { ScatterChart } from '@mui/x-charts/ScatterChart';
+
+// const data = [
+//   { "id": "data-1", "x1": 21, "y1": 201, "x2": 144, "y2": 17 },
+//   { "id": "data-2", "x1": 242, "y1": 428, "x2": 159, "y2": 85 },
+//   { "id": "data-3", "x1": 156, "y1": 324, "x2": 292, "y2": 196 },
+//   { "id": "data-4", "x1": 42, "y1": 254, "x2": 226, "y2": 190 },
+//   { "id": "data-5", "x1": 23, "y1": 209, "x2": 150, "y2": 38 },
+//   { "id": "data-6", "x1": 228, "y1": 418, "x2": 297, "y2": 206 },
+//   { "id": "data-7", "x1": 16, "y1": 194, "x2": 181, "y2": 110 },
+//   { "id": "data-8", "x1": 145, "y1": 326, "x2": 295, "y2": 213 },
+//   { "id": "data-9", "x1": 0, "y1": 241, "x2": 368, "y2": 282 },
+//   { "id": "data-10", "x1": 133, "y1": 311, "x2": 314, "y2": 201 },
+//   { "id": "data-11", "x1": 182, "y1": 362, "x2": 309, "y2": 224 },
+//   { "id": "data-12", "x1": 14, "y1": 212, "x2": 353, "y2": 301 },
+//   { "id": "data-13", "x1": 95, "y1": 321, "x2": 225, "y2": 128 },
+//   { "id": "data-14", "x1": 27, "y1": 209, "x2": 330, "y2": 294 },
+//   { "id": "data-15", "x1": 153, "y1": 382, "x2": 181, "y2": 74 },
+//   { "id": "data-16", "x1": 180, "y1": 342, "x2": 196, "y2": 154 },
+//   { "id": "data-17", "x1": 15, "y1": 197, "x2": 268, "y2": 177 },
+//   { "id": "data-18", "x1": 94, "y1": 311, "x2": 348, "y2": 224 },
+//   { "id": "data-19", "x1": 125, "y1": 270, "x2": 370, "y2": 281 },
+//   { "id": "data-20", "x1": 241, "y1": 476, "x2": 280, "y2": 228 }
+// ]
+// const series = [
+//   {
+//     id: 'series-1',
+//     label: 'Series A',
+//     data: data.map((v) => ({ x: v.x1, y: v.y1, id: v.id })),
+//     highlightScope: { highlight: 'item', fade: 'global' },
+//   },
+//   {
+//     id: 'series-2',
+//     label: 'Series B',
+//     data: data.map((v) => ({ x: v.x2, y: v.y2, id: v.id })),
+//     highlightScope: { highlight: 'item', fade: 'global' },
+//   },
+// ];
+
+// export default function ScatterSelectors({ className }) {
+//   return (
+//     <div className={`chatbot-container ${className || ''}`}>
+//       <ScatterChart
+//         height={300}
+//         voronoiMaxRadius={30}
+//         series={series}
+//         sx={{
+//           '& [data-faded=true]': { opacity: 0.4 }
+//         }}
+//       />
+//     </div>
+//   );
+// }
+
+import * as React from 'react';
 import { ScatterChart } from '@mui/x-charts/ScatterChart';
 
 const data = [
@@ -21,7 +76,8 @@ const data = [
   { "id": "data-18", "x1": 94, "y1": 311, "x2": 348, "y2": 224 },
   { "id": "data-19", "x1": 125, "y1": 270, "x2": 370, "y2": 281 },
   { "id": "data-20", "x1": 241, "y1": 476, "x2": 280, "y2": 228 }
-]
+];
+
 const series = [
   {
     id: 'series-1',
@@ -38,14 +94,40 @@ const series = [
 ];
 
 export default function ScatterSelectors({ className }) {
+  const containerRef = React.useRef(null);
+  const [chartHeight, setChartHeight] = React.useState(300); // valeur par défaut
+
+  React.useEffect(() => {
+    if (!containerRef.current || typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      const { height } = entry.contentRect;
+      if (height > 0) {
+        setChartHeight(height);
+      }
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={`chatbot-container ${className || ''}`}>
+    <div
+      ref={containerRef}
+      className={`chatbot-container ${className || ''}`}
+      style={{
+        width: '100%',
+        height: '100%', // 🟢 prend toute la place du container (50vh / 100vh)
+      }}
+    >
       <ScatterChart
-        height={300}
+        height={Math.max(chartHeight, 160)} // min visuelle raisonnable
         voronoiMaxRadius={30}
         series={series}
         sx={{
-          '& [data-faded=true]': { opacity: 0.4 }
+          '& [data-faded=true]': { opacity: 0.4 },
         }}
       />
     </div>

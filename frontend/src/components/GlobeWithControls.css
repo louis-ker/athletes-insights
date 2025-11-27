@@ -1,0 +1,32 @@
+.globeAndButtons {
+    display: flex;
+    flex-direction: row;   /* Globe à gauche, boutons à droite */
+    justify-content: center;
+    align-items: center;
+    gap: 24px;             /* espace entre globe et boutons */
+    padding: 120px;
+}
+
+.countriesTable {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* pour aligner les boutons à gauche */
+    gap: 8px;
+}
+
+.countryButton {
+    font-weight: bolder;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    background: transparent;
+    color: rgb(255, 255, 255);
+}
+
+.countryButton:hover {
+    color: #8200cdff;
+    text-decoration: underline;
+    text-decoration-color: #8200cdff;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 3px;
+}

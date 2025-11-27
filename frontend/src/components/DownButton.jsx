@@ -48,16 +48,16 @@ const StyledWrapper = styled.div`
     left: 50%;
     transform: translateX(-50%);
     width: 50px;
-    top: 700px;
+    top: 660px;
     height: 50px;
     border-radius: 50%;
-    background-color: rgb(20, 20, 20);
-    border: none;
+    background-color: #8200cdff;
+    border: 5px solid #d896ffff;
+    outline: 5px solid #d896ffff;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
     cursor: pointer;
     transition-duration: 0.3s;
     overflow: hidden;
@@ -81,7 +81,8 @@ const StyledWrapper = styled.div`
     width: 140px;
     border-radius: 50px;
     transition-duration: 0.3s;
-    background-color: rgb(181, 160, 255);
+    background-color: #8200cdff;
+    outline: 10px solid #f2ddffff;
   }
 
   .button:hover .svgIcon {

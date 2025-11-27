@@ -26,7 +26,7 @@ def run_script():
     question = data.get("question")
 
     result = subprocess.run(
-        ["python", "main.py", "--no-web-search", "-q", question],
+        ["python", "main.py", "--use-files", "--use-urls", "--web-search", "-q", question],
         capture_output=True,
         text=True,
         cwd="rag-article-generator"

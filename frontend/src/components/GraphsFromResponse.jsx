@@ -7,7 +7,7 @@ export default function GraphsFromResponse({ responseData }) {
   const entries = Object.entries(graphs);
 
   if (!entries.length) {
-    return <em>Aucun graphique généré pour cette question.</em>;
+    return <em></em>;
     }
 
   // on limite à 50 lignes comme demandé côté prompt

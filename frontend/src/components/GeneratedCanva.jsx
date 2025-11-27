@@ -12,7 +12,7 @@ export default function GeneratedCanva({ data }) {
   return (
     <div style={{ padding: "1rem" }}>
       {/* Question initiale */}
-      <h4 style={{ marginTop: 0 }}>Question initiale</h4>
+      <h4 style={{ marginTop: 0 }}>Initial Question</h4>
       <p>{initialQuestion}</p>
 
       {/* Titre principal */}

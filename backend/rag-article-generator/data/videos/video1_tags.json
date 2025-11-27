@@ -1,0 +1,119 @@
+{
+  "file": "video1_alibaba_Men____Montreal_2024_ShortTrackWorldTour.mp4",
+  "type": "competition",
+  "metadata": {
+    "event": "Short Track World Tour",
+    "discipline": "Short-Track Speed Skating",
+    "distance": "500 meters",
+    "stage": "Final",
+    "location": "Montreal",
+    "Stadium": "Maurice Richard Arena",
+    "year": "2024",
+    "athletes": ["William Dandjinou", "Steven Dubois", "Lin XiaoJun", "Andrew Heo", "Pietro Sighel"]
+  },
+  "segments": [
+    {
+      "start": "00:00.0",
+      "end": "00:07.0",
+      "tags": ["start"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 },
+        { "athlete": "Pietro Sighel", "position": 5 }
+      ]
+    },
+    {
+      "start": "00:07.1",
+      "end": "00:10.0",
+      "tags": ["gapping", "William Dandjinou"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 },
+        { "athlete": "Pietro Sighel", "position": 5 }
+      ]
+    },
+    {
+      "start": "00:14.0",
+      "end": "00:20.0",
+      "tags": ["gapping", "William Dandjinou"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 },
+        { "athlete": "Pietro Sighel", "position": 5 }
+      ]
+    },
+    {
+      "start": "00:30.0",
+      "end": "00:35.0",
+      "tags": ["fall", "Pietro Sighel"],
+      "status": [
+        { "athlete": "Pietro Sighel", "state": "out", "reason": "fall" }
+      ],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 }
+      ]
+    },
+    {
+      "start": "00:35.1",
+      "end": "00:38.9",
+      "tags": ["gapped", "Andrew Heo"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 }
+      ]
+    },
+    {
+      "start": "00:39.0",
+      "end": "00:45.0",
+      "tags": ["end", "William Dandjinou"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 }
+      ],
+      "status": [
+        { "athlete": "Pietro Sighel", "state": "out", "reason": "fall" }
+      ]
+    },
+    {
+      "start": "00:45.1",
+      "end": "00:49.0",
+      "tags": ["celebration", "William Dandjinou", "commentators"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 }
+      ],
+      "status": [
+        { "athlete": "Pietro Sighel", "state": "out", "reason": "fall" }
+      ]
+    },
+    {
+      "start": "02:40.0",
+      "end": "02:49.9",
+      "tags": ["end slow-motion", "celebration slow-motion", "William Dandjinou"],
+      "ranking": [
+        { "athlete": "William Dandjinou", "position": 1 },
+        { "athlete": "Steven Dubois", "position": 2 },
+        { "athlete": "Lin XiaoJun", "position": 3 },
+        { "athlete": "Andrew Heo", "position": 4 }
+      ],
+      "status": [
+        { "athlete": "Pietro Sighel", "state": "out", "reason": "fall" }
+      ]
+    }
+  ]
+}

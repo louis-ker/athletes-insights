@@ -17,11 +17,12 @@ DOC_GRADER_PROMPT = "Here is the retrieved document: \n\n {document} \n\n Here i
 RAG_PROMPT = """You are an assistant for question-answering tasks.
 Use the following pieces of retrieved context to answer the question.
 If you don't know the answer, just say that you don't know.
-Use three sentences maximum and keep the answer concise.
+
 
 Question: {question}
 Context: {context}
 Answer:"""
+# Use three sentences maximum and keep the answer concise.
 
 HALLUCINATION_GRADER_INSTRUCTIONS = """You are a teacher grading a quiz.
 You will be given FACTS and a STUDENT ANSWER.

@@ -1,0 +1,126 @@
+.ai-article {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.4rem 2.8rem;
+  border-radius: 24px;
+  background: rgba(6, 10, 24, 0.92);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  color: #f5f7ff;
+  line-height: 1.7;
+  backdrop-filter: blur(18px);
+}
+
+/* HEADER */
+
+.ai-article-header {
+  margin-bottom: 1.2rem;
+}
+
+.ai-article-question {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9aa3c7;
+  margin-bottom: 0.4rem;
+}
+
+.ai-article-question span {
+  color: #e5edff;
+  font-weight: 500;
+}
+
+.ai-article-title {
+  font-size: clamp(1.8rem, 2.4vw, 2.3rem);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+/* META CHIPS */
+
+.ai-article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.chip {
+  padding: 0.2rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: #c7d2ff;
+}
+
+.chip-primary {
+  background: linear-gradient(120deg, #3b82f6, #6366f1);
+  border: none;
+  color: white;
+}
+
+/* SECTIONS */
+
+.ai-article-section + .ai-article-section {
+  margin-top: 1.8rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid rgba(148, 163, 255, 0.25);
+}
+
+.ai-article-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+/* CONTENU MARKDOWN */
+
+.ai-article-body p {
+  margin: 0.4rem 0 0.8rem;
+}
+
+.ai-article-body strong {
+  font-weight: 600;
+  color: #e5edff;
+}
+
+/* Listes bien visibles */
+.ai-article-body ul,
+.ai-article-body ol {
+  margin: 0.2rem 0 1rem 0;
+  padding-left: 1.4rem;
+}
+
+.ai-article-body li + li {
+  margin-top: 0.25rem;
+}
+
+.ai-article-body ul {
+  list-style: disc;
+}
+
+.ai-article-body ol {
+  list-style: decimal;
+}
+
+/* Petits liens si un jour il y en a */
+.ai-article-body a {
+  color: #93c5fd;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .ai-article {
+    padding: 1.6rem 1.4rem;
+    border-radius: 18px;
+  }
+
+  .ai-article-title {
+    font-size: 1.5rem;
+  }
+}

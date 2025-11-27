@@ -1,0 +1,214 @@
+/* ================
+   THEME GLOBAL
+================ */
+
+body {
+  background-color: #121212;
+  color: #ffffff;
+  font-family: sans-serif;
+}
+
+.sidebar h2 {
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+/* ================
+   SIDEBAR
+================ */
+
+.sidebar {
+  background-color: #0f0018;
+  border-right: 1px solid #3d2748;
+  padding: 1rem;
+  width: 250px;
+  color: white;
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+
+.sidebar.closed {
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+/* Bouton pour toggle la sidebar */
+.toggle-sidebar-btn {
+  position: absolute;
+  top: 15px;
+  left: 250px; /* aligné avec la largeur sidebar ouverte */
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: left 0.3s ease-in-out;
+  z-index: 2;
+}
+
+/* Quand la sidebar est fermée, on ramène le bouton contre le bord gauche */
+.sidebar.closed + .toggle-sidebar-btn {
+  left: 0;
+}
+
+/* ================
+   WIDGETS DRAGGABLE
+================ */
+
+.widget-item {
+  background-color: #2c0046;
+  color: #e0e0e0;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  cursor: grab;
+  transition: background-color 0.2s ease;
+}
+
+.widget-item:hover {
+  background-color: #160022;
+}
+
+/* ================
+   BACKGROUND / LAYOUT GLOBAL
+================ */
+
+.dashboard-background {
+  display: flex;
+  background-color: #000b12;
+  position: relative; /* pour positionner le bouton toggle */
+  min-height: 100vh;
+}
+
+/* ================
+   GRID PRINCIPALE
+================ */
+
+.dashboard-grid {
+  flex: 1;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);  /* 2 colonnes sur desktop */
+  grid-auto-rows: 45vh;                   /* chaque ligne = 50% de la hauteur visible */
+  gap: 1.6rem;
+  background-color: #000b12;
+  min-width: 0;
+}
+
+/* ================
+   CONTAINERS DROPPABLE
+================ */
+
+.container {
+  background-color: #000b12;
+  border: 1px solid #3d2748;
+  border-radius: 10px;
+  padding: 1rem;
+  transition: background-color 0.8s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  position: relative;
+  height: 100%;       /* prend toute la hauteur de sa "case" (50vh) */
+  max-height: 100%;
+}
+
+.container:hover {
+  background-color: #0f0018;
+}
+
+.container.is-over {
+  background-color: #160022;
+}
+
+/* Tailles spéciales liées aux widgets */
+.container-wide {
+  grid-column: span 2;   /* 1x2 : largeur doublée, hauteur = 50vh */
+}
+
+.container-long {
+  grid-row: span 2;      /* 2x1 : hauteur = 2 * 50vh = 100vh */
+}
+
+/* ================
+   CONTENU DES CONTAINERS
+================ */
+
+.dropped-widget {
+  color: #e0e0e0;
+  padding: 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 100%;
+  flex: 1;          /* occupe l'espace dispo dans le container */
+  min-height: 0;    /* nécessaire pour que overflow fonctionne en flex */
+  overflow: auto;   /* si le graph est plus grand, il scroll à l'intérieur */
+}
+
+/* Icône "drop here" */
+
+.icon-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #2f0048;
+  opacity: 0.7;
+}
+
+/* ================
+   BOUTON HOME
+================ */
+
+.home-btn {
+  width: 50px;
+  padding: 10px 12px;
+  background: #1f2937;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.home-btn:hover {
+  background: #111827;
+  transform: translateY(-2px);
+}
+
+/* ================
+   RESPONSIVE MOBILE
+================ */
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;          /* 1 seule colonne */
+    grid-auto-rows: auto;                /* on laisse les lignes s'adapter */
+    height: auto;                        /* scroll normal sur mobile */
+  }
+
+  .container {
+    height: auto;
+    max-height: none;
+  }
+
+  /* Sur mobile, wide ne s'étend pas sur 2 colonnes (il n'y en a qu'une) */
+  .container-wide {
+    grid-column: span 1 !important;
+  }
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 100%;
+}

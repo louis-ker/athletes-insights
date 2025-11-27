@@ -266,193 +266,41 @@ def generate_article_canva(llm, question: str):
 def process_canva_with_graph(graph, canva, max_retries=3):
     results = {}
 
+    main_question = canva.get("header", {}).get("content", "").strip()
+
     for part_key in ["header", "part1", "part2", "part3"]:
         if part_key in canva and "content" in canva[part_key]:
-            question = canva[part_key]["content"]
-            answer = run_question(graph, question=question, max_retries=max_retries)
+            sub_question = canva[part_key]["content"].strip()
+            ctype = canva[part_key].get("content_type", "text_generation")
+
+            if part_key == "header":
+                # 👉 On force une réponse directe et complète à la question principale
+                prompt = (
+                    "Réponds directement, clairement et complètement à la question principale ci-dessous. "
+                    "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
+                    "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
+                    f"Question principale : {sub_question if sub_question else main_question}"
+                )
+            else:
+                # 👉 Sous-questions : on garde le contexte du header
+                prompt = (
+                    "Contexte global (question principale) : "
+                    f"{main_question}\n\n"
+                    "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
+                    "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
+                    f"Question spécifique : {sub_question}"
+                )
+
+            answer = run_question(graph, question=prompt, max_retries=max_retries)
+
             results[part_key] = {
-                "question": question,
-                "content_type": canva[part_key]["content_type"],
+                "question": sub_question or main_question,
+                "content_type": ctype,
                 "generated_answer": answer
             }
 
     return results
 
-# def generate_matplotlib_figure(content_type, question):
-#     if content_type == "data_analysis":
-#         print(f"Figure needed to anwser: {question}")
-
-#         print(os.getcwd())
-#         df = pd.read_csv("data/tables/athletes_500m_full_noNull_ordered.csv")
-#         print("Aperçu des données :")
-#         print(df.head())
-
-#         prompt = f"""
-#         You are a Python assistant. Here is an extract of a pandas DataFrame:
-#         {df.head().to_string(index=False)}
-
-#         The user is asking: "{question}"
-
-#         Génère uniquement le code Python nécessaire pour créer un graphique clair avec matplotlib.
-#         Le code doit supposer que le DataFrame complet est déjà chargé dans la variable `df`.
-
-#         Ne mets pas de texte explicatif, renvoie juste le code exécutable.
-#         """
-#         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-#         # Appel API
-#         response = client.chat.completions.create(
-#             model="gpt-4o-mini",
-#             messages=[{"role": "user", "content": prompt}],
-#         )
-
-#         code = response.choices[0].message.content
-
-#         # Nettoyer le code (enlever les ```python``` ou ```)
-#         code = code.replace("```python", "").replace("```", "").strip()
-
-#         print("\n--- Code généré ---\n")
-#         print(code)
-
-#         # Sauvegarder et exécuter le code
-#         with open("generated_plot.py", "w") as f:
-#             f.write("import pandas as pd\nimport matplotlib.pyplot as plt\nimport plotly.express as px\n")
-#             f.write("import sys\n\n")
-#             f.write(code)
-
-#     return 0
-
-# def generate_mui_chart_component(content_type, question):
-#     if content_type == "data_analysis":
-#         print(f"React component needed to answer: {question}")
-
-#         print(os.getcwd())
-#         df = pd.read_csv("data/tables/athletes_500m_full_noNull_ordered.csv")
-#         print("Aperçu des données :")
-#         print(df.head())
-
-#         # Conversion minimaliste de l'extrait du df pour le contexte
-#         head_string = df.head().to_string(index=False)
-
-#         prompt = f"""
-#         You are a front-end expert using React + MUI X Charts.
-
-#         Here is a preview of the dataset (the full dataset will be imported as JSON on the front-end):
-#         {head_string}
-
-#         The user is asking: "{question}"
-
-#         You are an expert in data visualization using React + MUI X Charts.
-
-#         Column details:
-#         - country: str, origin of the ice speed skating athlete
-#         - name: str, name of the ice speed skating athlete
-#         - laptime_min: minutes part of race time
-#         - laptime_sec: seconds part of race time
-#         - laptime_thousandth: milliseconds part of race time
-#         - date: date of the ice speed skating event
-#         - location: location of the ice speed skating event
-#         - competition: name of the ice speed skating event
-#         - category: category of the ice speed skating event
-
-#         Visualization objective: detect temporal trends and compare values across categories.
-
-#         Dataset size: ~50,000 rows.
-
-#         Task:
-#         Generate a ready-to-use React component that answers best the question with MUI X Charts.
-
-#         Rules:
-#         - Output only valid JSX. Do NOT output any explanation.
-#         - Use a most 50 rows of data
-#         - import the data like so : import data from './../../../backend/rag-article-generator/data/tables/athletes_500m_full_noNull_ordered.json';
-#         """
-
-#         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-#         response = client.chat.completions.create(
-#             model="gpt-4o-mini",
-#             messages=[{"role": "user", "content": prompt}]
-#         )
-
-#         code = response.choices[0].message.content
-#         code = code.replace("```jsx", "").replace("```javascript", "").replace("```", "").strip()
-
-#         print("\n--- Composant React généré ---\n")
-#         print(code)
-
-#         # Sauvegarde du composant
-#         output_path = "./../../frontend/src/components/GeneratedGraph.jsx"  # ajuste si nécessaire
-#         with open(output_path, "w") as f:
-#             f.write(code)
-
-#         print(f"\n✅ Fichier écrit dans : {output_path}")
-
-#     return 0
-
-# workflow.py
-# def generate_mui_chart_component(content_type, question):
-#     if content_type != "data_analysis":
-#         return None
-
-#     print(f"React component needed to answer: {question}")
-
-#     df = pd.read_csv("data/tables/athletes_500m_full_noNull_ordered.csv")
-#     head_string = df.head().to_string(index=False)
-
-#     # prompt = f"""
-#     # You are a front-end expert using React + MUI X Charts.
-
-#     # Dataset preview (the full dataset will be passed as a `data` prop on the front-end):
-#     # {head_string}
-
-#     # The user is asking: "{question}"
-
-#     # Rules (IMPORTANT):
-#     # - Output only valid JSX (no markdown fences).
-#     # - Do NOT import any local dataset. The component MUST accept a `data` prop (array of objects).
-#     # - Prefer MUI X Charts primitives. You may import from 'react', '@mui/x-charts' and 'recharts' only.
-#     # - Export a default React component named GeneratedChart: `export default function GeneratedChart({{ data }}) {{ ... }}`.
-#     # - Use at most 50 rows (slice in code if needed).
-#     # - No network calls, no dynamic imports, no CSS imports.
-#     # """
-
-#     prompt = f"""
-#     You are a front-end expert using React + recharts.
-
-#     Dataset preview (the full dataset will be passed as a `data` prop on the front-end):
-#     {head_string}
-
-#     The user is asking: "{question}"
-
-#     Rules (IMPORTANT):
-#     - Output only valid JSX (no markdown fences).
-#     - Do NOT import any local dataset. The component MUST accept a `data` prop (array of objects).
-#     - **Do NOT use `require()` or `import`.**
-#     - Export a default React component named GeneratedChart: `export default function GeneratedChart({{ data }}) {{ ... }}`.
-#     - Use at most 50 rows (slice in code if needed).
-#     - No network calls, no dynamic imports, no CSS imports.
-#     """
-
-#     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-#     response = client.chat.completions.create(
-#         model="gpt-4o-mini",
-#         messages=[{"role": "user", "content": prompt}]
-#     )
-
-#     code = response.choices[0].message.content or ""
-#     code = code.replace("```jsx", "").replace("```javascript", "").replace("```", "").strip()
-
-#     # (Optionnel) conserver le flux Dev en écrivant le fichier pour HMR
-#     output_path = "./../../frontend/src/components/GeneratedGraph.jsx"
-#     try:
-#         with open(output_path, "w") as f:
-#             f.write(code)
-#         print(f"\n✅ Fichier écrit dans : {output_path}")
-#     except Exception as e:
-#         print(f"⚠️ Impossible d'écrire le fichier : {e}")
-
-#     return code
 
 def generate_mui_chart_component(content_type, question):
     if content_type != "data_analysis":
@@ -471,19 +319,26 @@ def generate_mui_chart_component(content_type, question):
 
     The user is asking: "{question}"
 
+    - If the question ressembles : "How can you compare the consistency of lap times between different countries or categories of racers using the columns country, category, and the lap time data (laptime_min, laptime_sec, laptime_thousandth)?"
+    then do a boxplot.
+    - If the question ressembles : "Using the columns name and the lap time data (laptime_min, laptime_sec, laptime_thousandth), how can you show which racer achieved the best average or fastest lap times?"
+    then do a barplot.
+    - If the question ressembles : "If you want to represent the proportion of participants by country or by category, which columns from the table would you use, and how could a pie chart illustrate this distribution?"
+    then do a piechart.
+
     Rules (IMPORTANT):
     - Output only valid JSX (no markdown fences).
     - Do NOT import any local dataset. The component MUST accept a `data` prop (array of objects).
     - **Do NOT use `require()` or `import`.**
     - Export a default React component named GeneratedChart: `export default function GeneratedChart({{ data }}) {{ ... }}`.
-    - Use at most 50 rows (slice in code if needed).
+    
     - No network calls, no dynamic imports, no CSS imports.
     - Use ONLY Recharts primitives (e.g., LineChart, BarChart, PieChart, AreaChart, ComposedChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer, etc.) that are expected to exist in scope.
     """
-
+    # - Use at most 50 rows (slice in code if needed).
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[{"role": "user", "content": prompt}]
     )
 

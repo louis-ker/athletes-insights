@@ -1,21 +1,34 @@
 export default function GeneratedChart({ data }) {
-    // Preprocess data to ensure we handle a maximum of 50 rows and numeric conversions
-    const processedData = data.slice(0, 50).map(item => ({
-        name: item.name,
-        laptime: parseFloat(item.laptime_min) * 60 + parseFloat(item.laptime_sec) + parseFloat(item.laptime_thousandth) / 1000,
-        date: item.date
-    }));
+  const processLapTime = (row) => {
+    return row.laptime_min * 60000 + row.laptime_sec * 1000 + row.laptime_thousandth;
+  };
 
-    return (
-        <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={processedData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="laptime" fill="#8884d8" />
-            </BarChart>
-        </ResponsiveContainer>
-    );
+  // Step 1: Calculate average lap times per racer
+  const lapTimesByName = data.reduce((acc, curr) => {
+    const lapTime = processLapTime(curr);
+    if (!acc[curr.name]) {
+      acc[curr.name] = { totalLapTime: 0, count: 0 };
+    }
+    acc[curr.name].totalLapTime += lapTime;
+    acc[curr.name].count += 1;
+    return acc;
+  }, {});
+
+  const averagedLapTimes = Object.entries(lapTimesByName).map(([name, { totalLapTime, count }]) => ({
+    name,
+    averageLapTime: totalLapTime / count,
+  }));
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart data={averagedLapTimes}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="averageLapTime" fill="#8884d8" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
 }
