@@ -1,6 +1,7 @@
 {
-  "fingerprint": "5545749b0c5cf353826c14904093091f",
+  "fingerprint": "97b9fc76aa1e0758919b0d123c8925f4",
   "urls": [
+    "https://www.isu.org/inside-isu/about/",
     "https://en.wikipedia.org/wiki/International_Skating_Union",
     "https://en.wikipedia.org/wiki/Sports_governing_body",
     "https://en.wikipedia.org/wiki/Ice_skating",
@@ -4819,7 +4820,7 @@
   "use_urls": true,
   "use_files": true,
   "counts": {
-    "urls": 38,
+    "urls": 39,
     "files": 954,
     "sources": 954,
     "chunks": 1530

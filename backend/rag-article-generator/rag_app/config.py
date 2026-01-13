@@ -1,4 +1,5 @@
 URLS = [
+    "https://www.isu.org/inside-isu/about/",
     "https://en.wikipedia.org/wiki/International_Skating_Union",
     "https://en.wikipedia.org/wiki/Sports_governing_body",
     "https://en.wikipedia.org/wiki/Ice_skating",

@@ -15,6 +15,8 @@ import pandas as pd
 import os
 from openai import OpenAI
 
+import concurrent.futures
+
 
 def build_graph(
     retriever,
@@ -32,18 +34,6 @@ def build_graph(
     """
 
     # ---------- NODES ----------
-
-    # def web_search(state: Dict[str, Any]):
-    #     print("---WEB SEARCH---")
-    #     question = state["question"]
-    #     documents = state.get("documents", [])
-    #     if web_search_tool is None:
-    #         print("[websearch] Désactivé (aucun outil).")
-    #         return {"documents": documents}
-    #     docs = web_search_tool.invoke({"query": question})
-    #     web_results = "\n".join([d["content"] for d in docs])
-    #     documents.append(Document(page_content=web_results))
-    #     return {"documents": documents}
 
     def web_search(state: Dict[str, Any]):
         print("---WEB SEARCH---")
@@ -74,14 +64,33 @@ def build_graph(
 
     def retrieve(state: Dict[str, Any]):
         print("---RETRIEVE---")
-        question = state["question"]
-        documents = retriever.invoke(question)
+        raw_question = state["question"]
+        
+        # --- DÉBUT NETTOYAGE ---
+        # On extrait la vraie question des instructions du prompt
+        if "Question spécifique :" in raw_question:
+            search_query = raw_question.split("Question spécifique :")[-1].strip()
+        elif "Question principale :" in raw_question:
+            search_query = raw_question.split("Question principale :")[-1].strip()
+        else:
+            search_query = raw_question
+        # --- FIN NETTOYAGE ---
+
+        print(f"[retrieve] Recherche nettoyée : '{search_query}'")
+        
+        documents = retriever.invoke(search_query)
         return {"documents": documents}
 
     def grade_documents(state: Dict[str, Any]):
         print("---CHECK DOCUMENT RELEVANCE TO QUESTION---")
         question = state["question"]
         documents = state["documents"]
+
+        # AJOUT TEMPORAIRE DE DEBUG
+        print(f"\n[DEBUG] Documents trouvés pour '{state['question']}':")
+        for i, d in enumerate(documents):
+            print(f"--- Doc {i} (extrait): {d.page_content[:200]}...")
+        # FIN AJOUT
 
         filtered_docs = []
         web_search_flag = "No"
@@ -290,41 +299,113 @@ def generate_article_canva(llm, question: str):
     print("CLEAN LLM OUTPUT:\n", response_clean)
     return json.loads(response_clean)
 
+# def process_canva_with_graph(graph, canva, max_retries=3):
+#     results = {}
+
+#     main_question = canva.get("header", {}).get("content", "").strip()
+
+#     for part_key in ["header", "part1", "part2", "part3"]:
+#         if part_key in canva and "content" in canva[part_key]:
+#             sub_question = canva[part_key]["content"].strip()
+#             ctype = canva[part_key].get("content_type", "text_generation")
+
+#             if part_key == "header":
+#                 # 👉 On force une réponse directe et complète à la question principale
+#                 prompt = (
+#                     "Réponds directement, clairement et complètement à la question principale ci-dessous. "
+#                     "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
+#                     "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
+#                     f"Question principale : {sub_question if sub_question else main_question}"
+#                 )
+#             else:
+#                 # 👉 Sous-questions : on garde le contexte du header
+#                 prompt = (
+#                     "Contexte global (question principale) : "
+#                     f"{main_question}\n\n"
+#                     "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
+#                     "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
+#                     f"Question spécifique : {sub_question}"
+#                 )
+
+#             answer = run_question(graph, question=prompt, max_retries=max_retries)
+
+#             results[part_key] = {
+#                 "question": sub_question or main_question,
+#                 "content_type": ctype,
+#                 "generated_answer": answer
+#             }
+
+#     return results
+
+def process_single_part(graph, part_key, part_data, main_question, max_retries):
+    """
+    Fonction helper qui traite UNE seule partie.
+    Sera exécutée en parallèle.
+    """
+    if "content" not in part_data:
+        return part_key, None
+
+    sub_question = part_data["content"].strip()
+    ctype = part_data.get("content_type", "text_generation")
+
+    if part_key == "header":
+        prompt = (
+            "Réponds directement, clairement et complètement à la question principale ci-dessous. "
+            "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
+            "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
+            f"Question principale : {sub_question if sub_question else main_question}"
+        )
+    else:
+        prompt = (
+            "Contexte global (question principale) : "
+            f"{main_question}\n\n"
+            "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
+            "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
+            f"Question spécifique : {sub_question}"
+        )
+
+    # C'est ici que ça prend du temps (appel RAG/Web/LLM)
+    answer = run_question(graph, question=prompt, max_retries=max_retries)
+
+    result_data = {
+        "question": sub_question or main_question,
+        "content_type": ctype,
+        "generated_answer": answer
+    }
+    return part_key, result_data
+
+
 def process_canva_with_graph(graph, canva, max_retries=3):
     results = {}
-
     main_question = canva.get("header", {}).get("content", "").strip()
-
-    for part_key in ["header", "part1", "part2", "part3"]:
-        if part_key in canva and "content" in canva[part_key]:
-            sub_question = canva[part_key]["content"].strip()
-            ctype = canva[part_key].get("content_type", "text_generation")
-
-            if part_key == "header":
-                # 👉 On force une réponse directe et complète à la question principale
-                prompt = (
-                    "Réponds directement, clairement et complètement à la question principale ci-dessous. "
-                    "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
-                    "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
-                    f"Question principale : {sub_question if sub_question else main_question}"
+    
+    # On prépare la liste des tâches à accomplir
+    tasks = []
+    
+    # On crée un gestionnaire de threads (max_workers=5 signifie jusqu'à 5 tâches en parallèle)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        
+        for part_key in ["header", "part1", "part2", "part3"]:
+            if part_key in canva:
+                # On soumet la tâche à l'executor, sans attendre la réponse tout de suite
+                future = executor.submit(
+                    process_single_part, 
+                    graph, 
+                    part_key, 
+                    canva[part_key], 
+                    main_question, 
+                    max_retries
                 )
-            else:
-                # 👉 Sous-questions : on garde le contexte du header
-                prompt = (
-                    "Contexte global (question principale) : "
-                    f"{main_question}\n\n"
-                    "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
-                    "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
-                    f"Question spécifique : {sub_question}"
-                )
-
-            answer = run_question(graph, question=prompt, max_retries=max_retries)
-
-            results[part_key] = {
-                "question": sub_question or main_question,
-                "content_type": ctype,
-                "generated_answer": answer
-            }
+                tasks.append(future)
+        
+        # Maintenant on attend que les résultats arrivent (as_completed)
+        for future in concurrent.futures.as_completed(tasks):
+            try:
+                key, data = future.result()
+                if data:
+                    results[key] = data
+            except Exception as e:
+                print(f"Erreur lors du traitement parallèle d'une partie : {e}")
 
     return results
 
