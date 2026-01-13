@@ -142,7 +142,7 @@ export default function BarChartHorizontal({ className }) {
           fontWeight: 500,
         }}
       >
-        Palmarès des athlètes (🥇 Wins / 🥈 Runner-up / 🥉 Third)
+        Athletes' Record (🥇 Wins / 🥈 Runner-up / 🥉 Third)
       </Typography>
 
       {/* Zone du graphe qui prend tout l'espace restant */}
