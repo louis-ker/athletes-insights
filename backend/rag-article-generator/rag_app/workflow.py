@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage
@@ -246,16 +246,49 @@ def build_graph(
     return workflow.compile()
 
 
-def run_question(graph, question: str, max_retries: int = 3) -> str:
+# def run_question(graph, question: str, max_retries: int = 3) -> str:
+#     """
+#     Exécute le graphe en mode stream et renvoie le texte final de génération.
+#     """
+#     final_text = ""
+#     graph_input = {"question": question, "max_retries": max_retries}
+#     for event in graph.stream(graph_input, stream_mode="values"):
+#         if "generation" in event:
+#             final_text = event["generation"].content
+#     return final_text or "(no answer)"
+
+# ---------------------------------------------------------
+# 1. MODIFICATION DE LA FONCTION D'EXÉCUTION (POUR RAGAS)
+# ---------------------------------------------------------
+
+def run_question(graph, question: str, max_retries: int = 3) -> Dict[str, Any]:
     """
-    Exécute le graphe en mode stream et renvoie le texte final de génération.
+    Exécute le graphe et renvoie la réponse ET les contextes (documents).
+    Format retourné : {
+        "answer": str,
+        "contexts": List[str]  # Liste des textes des chunks utilisés
+    }
     """
-    final_text = ""
+    final_answer = ""
+    final_contexts = []
+    
     graph_input = {"question": question, "max_retries": max_retries}
+    
+    # On itère sur le flux. stream_mode="values" renvoie l'état complet à chaque étape.
     for event in graph.stream(graph_input, stream_mode="values"):
+        # On capture la réponse générée si elle existe
         if "generation" in event:
-            final_text = event["generation"].content
-    return final_text or "(no answer)"
+            final_answer = event["generation"].content
+        
+        # On capture les documents s'ils existent (c'est le contexte)
+        if "documents" in event:
+            # Ragas a besoin d'une liste de strings, pas d'objets Document
+            final_contexts = [d.page_content for d in event["documents"]]
+
+    return {
+        "answer": final_answer or "(no answer)",
+        "contexts": final_contexts
+    }
 
 def generate_article_canva(llm, question: str):
     prompt = f"""
@@ -299,48 +332,52 @@ def generate_article_canva(llm, question: str):
     print("CLEAN LLM OUTPUT:\n", response_clean)
     return json.loads(response_clean)
 
-# def process_canva_with_graph(graph, canva, max_retries=3):
-#     results = {}
 
-#     main_question = canva.get("header", {}).get("content", "").strip()
+# def process_single_part(graph, part_key, part_data, main_question, max_retries):
+#     """
+#     Fonction helper qui traite UNE seule partie.
+#     Sera exécutée en parallèle.
+#     """
+#     if "content" not in part_data:
+#         return part_key, None
 
-#     for part_key in ["header", "part1", "part2", "part3"]:
-#         if part_key in canva and "content" in canva[part_key]:
-#             sub_question = canva[part_key]["content"].strip()
-#             ctype = canva[part_key].get("content_type", "text_generation")
+#     sub_question = part_data["content"].strip()
+#     ctype = part_data.get("content_type", "text_generation")
 
-#             if part_key == "header":
-#                 # 👉 On force une réponse directe et complète à la question principale
-#                 prompt = (
-#                     "Réponds directement, clairement et complètement à la question principale ci-dessous. "
-#                     "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
-#                     "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
-#                     f"Question principale : {sub_question if sub_question else main_question}"
-#                 )
-#             else:
-#                 # 👉 Sous-questions : on garde le contexte du header
-#                 prompt = (
-#                     "Contexte global (question principale) : "
-#                     f"{main_question}\n\n"
-#                     "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
-#                     "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
-#                     f"Question spécifique : {sub_question}"
-#                 )
+#     if part_key == "header":
+#         prompt = (
+#             "Réponds directement, clairement et complètement à la question principale ci-dessous. "
+#             "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
+#             "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
+#             f"Question principale : {sub_question if sub_question else main_question}"
+#         )
+#     else:
+#         prompt = (
+#             "Contexte global (question principale) : "
+#             f"{main_question}\n\n"
+#             "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
+#             "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
+#             f"Question spécifique : {sub_question}"
+#         )
 
-#             answer = run_question(graph, question=prompt, max_retries=max_retries)
+#     # C'est ici que ça prend du temps (appel RAG/Web/LLM)
+#     answer = run_question(graph, question=prompt, max_retries=max_retries)
 
-#             results[part_key] = {
-#                 "question": sub_question or main_question,
-#                 "content_type": ctype,
-#                 "generated_answer": answer
-#             }
+#     result_data = {
+#         "question": sub_question or main_question,
+#         "content_type": ctype,
+#         "generated_answer": answer
+#     }
+#     return part_key, result_data
 
-#     return results
+# ---------------------------------------------------------
+# 2. MODIFICATION DU TRAITEMENT PARALLÈLE (ADAPTATION)
+# ---------------------------------------------------------
 
 def process_single_part(graph, part_key, part_data, main_question, max_retries):
     """
-    Fonction helper qui traite UNE seule partie.
-    Sera exécutée en parallèle.
+    Fonction helper exécutée en parallèle.
+    Adaptée pour gérer le retour dictionnaire de run_question.
     """
     if "content" not in part_data:
         return part_key, None
@@ -364,13 +401,14 @@ def process_single_part(graph, part_key, part_data, main_question, max_retries):
             f"Question spécifique : {sub_question}"
         )
 
-    # C'est ici que ça prend du temps (appel RAG/Web/LLM)
-    answer = run_question(graph, question=prompt, max_retries=max_retries)
+    # Appel à la nouvelle version de run_question
+    result_dict = run_question(graph, question=prompt, max_retries=max_retries)
 
     result_data = {
         "question": sub_question or main_question,
         "content_type": ctype,
-        "generated_answer": answer
+        "generated_answer": result_dict["answer"],       # On extrait le texte pour l'affichage JSON
+        "retrieved_contexts": result_dict["contexts"]    # On garde les contextes (utile pour debug ou Ragas futur)
     }
     return part_key, result_data
 
