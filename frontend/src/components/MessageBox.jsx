@@ -37,7 +37,7 @@ export default function MessageBox({ pinAtPx = 1000, setResponseData, setIsLoadi
     // Local :
     // http://localhost:4000/api/run
     try {
-      const response = await fetch("https://athletes-insights-backend.onrender.com/api/ask", {
+      const response = await fetch("http://localhost:4000/api/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q })

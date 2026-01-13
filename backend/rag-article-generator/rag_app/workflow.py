@@ -33,15 +33,42 @@ def build_graph(
 
     # ---------- NODES ----------
 
+    # def web_search(state: Dict[str, Any]):
+    #     print("---WEB SEARCH---")
+    #     question = state["question"]
+    #     documents = state.get("documents", [])
+    #     if web_search_tool is None:
+    #         print("[websearch] Désactivé (aucun outil).")
+    #         return {"documents": documents}
+    #     docs = web_search_tool.invoke({"query": question})
+    #     web_results = "\n".join([d["content"] for d in docs])
+    #     documents.append(Document(page_content=web_results))
+    #     return {"documents": documents}
+
     def web_search(state: Dict[str, Any]):
         print("---WEB SEARCH---")
         question = state["question"]
         documents = state.get("documents", [])
+        
         if web_search_tool is None:
             print("[websearch] Désactivé (aucun outil).")
             return {"documents": documents}
+            
         docs = web_search_tool.invoke({"query": question})
-        web_results = "\n".join([d["content"] for d in docs])
+        
+        # --- DÉBUT CORRECTIF ---
+        web_results = ""
+        # Cas 1 : Tavily renvoie une liste de Strings (nouveau comportement)
+        if isinstance(docs, list) and len(docs) > 0 and isinstance(docs[0], str):
+            web_results = "\n".join(docs)
+        # Cas 2 : Tavily renvoie une liste de Dictionnaires (ancien comportement)
+        elif isinstance(docs, list) and len(docs) > 0 and isinstance(docs[0], dict):
+            web_results = "\n".join([d.get("content", "") for d in docs])
+        # Cas 3 : Autre format inattendu
+        else:
+            web_results = str(docs)
+        # --- FIN CORRECTIF ---
+
         documents.append(Document(page_content=web_results))
         return {"documents": documents}
 

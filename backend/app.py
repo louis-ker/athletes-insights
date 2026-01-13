@@ -20,7 +20,7 @@ def hello():
 # @app.route("/api/run", methods=["POST"])
 # Render :
 # @app.route("/api/ask", methods=["POST"])
-@app.route("/api/ask", methods=["POST"])
+@app.route("/api/run", methods=["POST"])
 def run_script():
     data = request.json
     question = data.get("question")
