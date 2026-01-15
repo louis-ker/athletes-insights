@@ -8,7 +8,8 @@ from .types import GraphState
 from .prompts import RAG_PROMPT
 from .utils import format_docs
 from .router import route_decision
-from .graders import grade_document_relevance, grade_hallucination, grade_answer
+# from .graders import grade_document_relevance, grade_hallucination, grade_answer
+from .graders import grade_documents_batch, grade_hallucination, grade_answer
 
 import json
 import pandas as pd
@@ -81,28 +82,64 @@ def build_graph(
         documents = retriever.invoke(search_query)
         return {"documents": documents}
 
+    # def grade_documents(state: Dict[str, Any]):
+    #     print("---CHECK DOCUMENT RELEVANCE TO QUESTION---")
+    #     question = state["question"]
+    #     documents = state["documents"]
+
+    #     # AJOUT TEMPORAIRE DE DEBUG
+    #     print(f"\n[DEBUG] Documents trouvés pour '{state['question']}':")
+    #     for i, d in enumerate(documents):
+    #         print(f"--- Doc {i} (extrait): {d.page_content[:200]}...")
+    #     # FIN AJOUT
+
+    #     filtered_docs = []
+    #     web_search_flag = "No"
+    #     for d in documents:
+    #         grade = grade_document_relevance(doc_grader, d.page_content, question)
+    #         if grade == "yes":
+    #             print("---GRADE: DOCUMENT RELEVANT---")
+    #             filtered_docs.append(d)
+    #         else:
+    #             print("---GRADE: DOCUMENT NOT RELEVANT---")
+    #             if enable_websearch:
+    #                 web_search_flag = "Yes"
+    #     return {"documents": filtered_docs, "web_search": web_search_flag}
+
     def grade_documents(state: Dict[str, Any]):
-        print("---CHECK DOCUMENT RELEVANCE TO QUESTION---")
+        print("---CHECK DOCUMENT RELEVANCE (BATCH)---")
         question = state["question"]
         documents = state["documents"]
+        
+        # S'il n'y a pas de documents, on sort direct
+        if not documents:
+            return {"documents": [], "web_search": "Yes" if enable_websearch else "No"}
 
-        # AJOUT TEMPORAIRE DE DEBUG
-        print(f"\n[DEBUG] Documents trouvés pour '{state['question']}':")
-        for i, d in enumerate(documents):
-            print(f"--- Doc {i} (extrait): {d.page_content[:200]}...")
-        # FIN AJOUT
-
+        # 1. APPEL LLM UNIQUE (Batch)
+        scores_dict = grade_documents_batch(doc_grader, documents, question)
+        
         filtered_docs = []
         web_search_flag = "No"
-        for d in documents:
-            grade = grade_document_relevance(doc_grader, d.page_content, question)
-            if grade == "yes":
-                print("---GRADE: DOCUMENT RELEVANT---")
+        
+        # 2. On itère localement (super rapide, pas d'appel LLM)
+        for i, d in enumerate(documents):
+            # On récupère le score via l'index. Par défaut "no" si le LLM a oublié l'index.
+            score = scores_dict.get(i, "no")
+            
+            if score == "yes":
+                print(f"---GRADE: Doc {i} RELEVANT---")
                 filtered_docs.append(d)
             else:
-                print("---GRADE: DOCUMENT NOT RELEVANT---")
-                if enable_websearch:
-                    web_search_flag = "Yes"
+                print(f"---GRADE: Doc {i} NOT RELEVANT---")
+        
+        # 3. Logique de déclenchement Web Search
+        # OPTIMISATION: On ne déclenche Web Search que si on a perdu TROP de documents
+        # Exemple : Si on a 0 pertinent, ou si on a récupéré moins de 1 doc valide
+        if len(filtered_docs) == 0:
+            if enable_websearch:
+                print("---DECISION: ALL DOCS IRRELEVANT -> WEB SEARCH---")
+                web_search_flag = "Yes"
+        
         return {"documents": filtered_docs, "web_search": web_search_flag}
 
     def generate(state: Dict[str, Any]):
@@ -246,21 +283,6 @@ def build_graph(
     return workflow.compile()
 
 
-# def run_question(graph, question: str, max_retries: int = 3) -> str:
-#     """
-#     Exécute le graphe en mode stream et renvoie le texte final de génération.
-#     """
-#     final_text = ""
-#     graph_input = {"question": question, "max_retries": max_retries}
-#     for event in graph.stream(graph_input, stream_mode="values"):
-#         if "generation" in event:
-#             final_text = event["generation"].content
-#     return final_text or "(no answer)"
-
-# ---------------------------------------------------------
-# 1. MODIFICATION DE LA FONCTION D'EXÉCUTION (POUR RAGAS)
-# ---------------------------------------------------------
-
 def run_question(graph, question: str, max_retries: int = 3) -> Dict[str, Any]:
     """
     Exécute le graphe et renvoie la réponse ET les contextes (documents).
@@ -333,46 +355,6 @@ def generate_article_canva(llm, question: str):
     return json.loads(response_clean)
 
 
-# def process_single_part(graph, part_key, part_data, main_question, max_retries):
-#     """
-#     Fonction helper qui traite UNE seule partie.
-#     Sera exécutée en parallèle.
-#     """
-#     if "content" not in part_data:
-#         return part_key, None
-
-#     sub_question = part_data["content"].strip()
-#     ctype = part_data.get("content_type", "text_generation")
-
-#     if part_key == "header":
-#         prompt = (
-#             "Réponds directement, clairement et complètement à la question principale ci-dessous. "
-#             "Ne propose ni plan ni étapes, ne renvoie pas de JSON. "
-#             "Structure ta réponse en 2–3 paragraphes courts, avec des points clés si utile.\n\n"
-#             f"Question principale : {sub_question if sub_question else main_question}"
-#         )
-#     else:
-#         prompt = (
-#             "Contexte global (question principale) : "
-#             f"{main_question}\n\n"
-#             "Réponds maintenant à la question spécifique ci-dessous en t’alignant avec le contexte. "
-#             "Sois concret et auto-suffisant, pas de renvoi au plan :\n\n"
-#             f"Question spécifique : {sub_question}"
-#         )
-
-#     # C'est ici que ça prend du temps (appel RAG/Web/LLM)
-#     answer = run_question(graph, question=prompt, max_retries=max_retries)
-
-#     result_data = {
-#         "question": sub_question or main_question,
-#         "content_type": ctype,
-#         "generated_answer": answer
-#     }
-#     return part_key, result_data
-
-# ---------------------------------------------------------
-# 2. MODIFICATION DU TRAITEMENT PARALLÈLE (ADAPTATION)
-# ---------------------------------------------------------
 
 def process_single_part(graph, part_key, part_data, main_question, max_retries):
     """

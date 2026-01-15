@@ -1,4 +1,5 @@
 import os
+import time
 import random
 import json
 import pandas as pd
@@ -11,7 +12,7 @@ load_dotenv()
 # --- 2. IMPORTS ---
 # On garde Ragas pour l'évaluation, mais plus pour la génération
 from ragas import evaluate
-from ragas.metrics import Faithfulness, AnswerRelevancy 
+from ragas.metrics import Faithfulness, AnswerRelevancy, ContextPrecision, ContextRecall
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 
@@ -29,8 +30,8 @@ from rag_app.websearch import get_web_search_tool
 from rag_app.workflow import build_graph, run_question
 
 # --- CONFIGURATION ---
-TEST_SIZE = 100 
-OUTPUT_FILE = "ragas_evaluation_report.xlsx"
+TEST_SIZE = 100
+OUTPUT_FILE = "ragas_evaluation_report_q100_amelioration_documentGrader.xlsx"
 
 # ---------------------------------------------------------
 # 1. PRÉPARATION DES DOCUMENTS
@@ -152,17 +153,64 @@ def initialize_rag_app():
 # ---------------------------------------------------------
 # 4. ÉVALUATION ET CORRECTION
 # ---------------------------------------------------------
+# def evaluate_rag(test_df, graph):
+#     print("📝 [Exam] Le RAG passe l'examen...")
+    
+#     answers = []
+#     contexts = []
+
+#     for index, row in test_df.iterrows():
+#         q = row["question"]
+#         print(f"   Q {index+1}: {q}")
+#         try:
+#             # On utilise ta fonction modifiée qui renvoie {answer, contexts}
+#             res = run_question(graph, q, max_retries=3)
+#             answers.append(res["answer"])
+#             contexts.append(res["contexts"])
+#         except Exception as e:
+#             print(f"   ❌ Erreur RAG: {e}")
+#             answers.append("Error")
+#             contexts.append([])
+
+#     # Préparation pour Ragas
+#     # Ragas v0.2 attend : 'user_input', 'response', 'retrieved_contexts', 'reference'
+#     data_dict = {
+#         "user_input": test_df["question"].tolist(),
+#         "response": answers,
+#         "retrieved_contexts": contexts,
+#         "reference": test_df["ground_truth"].tolist()
+#     }
+    
+#     hf_dataset = Dataset.from_dict(data_dict)
+    
+#     print("⚖️ [Grading] Le juge (GPT-4o) corrige les copies...")
+    
+#     # Wrappers indispensables pour Ragas v0.2
+#     eval_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o"))
+#     eval_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
+    
+#     results = evaluate(
+#         hf_dataset,
+#         metrics=[Faithfulness(), AnswerRelevancy()],
+#         llm=eval_llm,
+#         embeddings=eval_embeddings
+#     )
+    
+#     return results
+
 def evaluate_rag(test_df, graph):
     print("📝 [Exam] Le RAG passe l'examen...")
     
     answers = []
     contexts = []
+    latencies = [] # <--- NOUVEAU : Liste pour stocker le temps
 
     for index, row in test_df.iterrows():
         q = row["question"]
         print(f"   Q {index+1}: {q}")
+        
+        start_time = time.time() # <--- Top départ
         try:
-            # On utilise ta fonction modifiée qui renvoie {answer, contexts}
             res = run_question(graph, q, max_retries=3)
             answers.append(res["answer"])
             contexts.append(res["contexts"])
@@ -170,32 +218,46 @@ def evaluate_rag(test_df, graph):
             print(f"   ❌ Erreur RAG: {e}")
             answers.append("Error")
             contexts.append([])
+        
+        end_time = time.time() # <--- Top fin
+        elapsed = end_time - start_time
+        latencies.append(elapsed) # On stocke
 
-    # Préparation pour Ragas
-    # Ragas v0.2 attend : 'user_input', 'response', 'retrieved_contexts', 'reference'
+    # Ajout des résultats dans le dictionnaire Ragas
     data_dict = {
         "user_input": test_df["question"].tolist(),
         "response": answers,
         "retrieved_contexts": contexts,
         "reference": test_df["ground_truth"].tolist()
+        # Note: Ragas ne gère pas la latence nativement dans le dataset, 
+        # on l'ajoutera au DataFrame final manuellement
     }
     
     hf_dataset = Dataset.from_dict(data_dict)
     
     print("⚖️ [Grading] Le juge (GPT-4o) corrige les copies...")
     
-    # Wrappers indispensables pour Ragas v0.2
     eval_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o"))
     eval_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
     
+    # --- MISE À JOUR DES MÉTRIQUES ---
     results = evaluate(
         hf_dataset,
-        metrics=[Faithfulness(), AnswerRelevancy()],
+        metrics=[
+            Faithfulness(), 
+            AnswerRelevancy(),
+            ContextPrecision(), # <--- NOUVEAU : Le retriever a-t-il ramené trop de bruit ?
+            ContextRecall()     # <--- NOUVEAU : Le retriever a-t-il trouvé la vérité ?
+        ],
         llm=eval_llm,
         embeddings=eval_embeddings
     )
     
-    return results
+    # On convertit en Pandas et on ajoute la latence
+    df_res = results.to_pandas()
+    df_res["latency_seconds"] = latencies # <--- On injecte la colonne latence
+    
+    return df_res # On retourne directement le DataFrame modifié
 
 # ---------------------------------------------------------
 # MAIN
@@ -211,14 +273,24 @@ def main():
         # 3. RAG
         graph = initialize_rag_app()
         
-        # 4. Eval
-        results = evaluate_rag(test_df, graph)
+        # # 4. Eval
+        # results = evaluate_rag(test_df, graph)
         
-        print("\n=== 📊 RÉSULTATS ===")
-        print(results)
+        # print("\n=== 📊 RÉSULTATS ===")
+        # print(results)
+        
+        # # Export
+        # df_res = results.to_pandas()
+        # df_res.to_excel(OUTPUT_FILE, index=False)
+
+        # 4. Eval
+        df_res = evaluate_rag(test_df, graph) # df_res est déjà le DataFrame
+        
+        print("\n=== 📊 RÉSULTATS MOYENS ===")
+        # Affiche la moyenne de chaque colonne numérique
+        print(df_res.mean(numeric_only=True))
         
         # Export
-        df_res = results.to_pandas()
         df_res.to_excel(OUTPUT_FILE, index=False)
         print(f"\n✅ Rapport sauvegardé : {OUTPUT_FILE}")
         
