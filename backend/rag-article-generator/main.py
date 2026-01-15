@@ -19,10 +19,15 @@ from rag_app.config import (
 from rag_app.llm import get_llm
 from rag_app.data import get_retriever  # charge ou (re)construit l'index
 from rag_app.router import create_router
+# from rag_app.graders import (
+#     create_doc_grader,
+#     create_hallucination_grader,
+#     create_answer_grader,
+# )
+
 from rag_app.graders import (
     create_doc_grader,
-    create_hallucination_grader,
-    create_answer_grader,
+    create_quality_grader, # <--- Remplace les anciens graders par celui-ci
 )
 from rag_app.websearch import get_web_search_tool
 from rag_app.workflow import build_graph, run_question
@@ -116,22 +121,24 @@ def main():
         force_rebuild=args.rebuild_index,
     )
 
-    router = create_router(llm)
+    # router = create_router(llm)
     doc_grader = create_doc_grader(llm)
-    hallucination_grader = create_hallucination_grader(llm)
-    answer_grader = create_answer_grader(llm)
+    # hallucination_grader = create_hallucination_grader(llm)
+    # answer_grader = create_answer_grader(llm)
+    quality_grader = create_quality_grader(llm)
+
     web_tool = get_web_search_tool() if args.web_search else None
 
+
     graph = build_graph(
-        retriever=retriever,
-        llm=llm,
-        router=router,
-        doc_grader=doc_grader,
-        hallucination_grader=hallucination_grader,
-        answer_grader=answer_grader,
-        web_search_tool=web_tool,
-        enable_websearch=args.web_search,
-    )
+            retriever=retriever,
+            llm=llm,
+            # router=router,        <-- On retire l'argument router
+            doc_grader=doc_grader,
+            quality_grader=quality_grader, # On passe le nouveau quality_grader
+            web_search_tool=web_tool,      # Maintenant web_tool est bien défini !
+            enable_websearch=args.web_search,
+        )
 
     # MODE INTERACTIF
     if args.interactive:

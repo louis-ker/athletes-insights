@@ -78,6 +78,12 @@ class GradeAnswer(BaseModel):
     binary_score: str = Field(description="Answer addresses the question? 'yes' or 'no'")
     explanation: str = Field(description="Reasoning for the score")
 
+class GradeQuality(BaseModel):
+    """Score combiné pour vérifier à la fois les hallucinations et la pertinence."""
+    is_grounded: str = Field(description="Is the answer supported by the facts? 'yes' or 'no'")
+    is_relevant: str = Field(description="Does the answer address the question? 'yes' or 'no'")
+    explanation: str = Field(description="Reasoning for the scores")
+
 # ---------- LangGraph state ----------
 
 class GraphState(TypedDict):

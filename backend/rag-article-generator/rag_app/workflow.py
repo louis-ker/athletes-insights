@@ -7,9 +7,10 @@ from langchain_core.documents import Document
 from .types import GraphState
 from .prompts import RAG_PROMPT
 from .utils import format_docs
-from .router import route_decision
+# from .router import route_decision
 # from .graders import grade_document_relevance, grade_hallucination, grade_answer
-from .graders import grade_documents_batch, grade_hallucination, grade_answer
+# from .graders import grade_documents_batch, grade_hallucination, grade_answer
+from .graders import grade_documents_batch, grade_generation_quality
 
 import json
 import pandas as pd
@@ -22,10 +23,11 @@ import concurrent.futures
 def build_graph(
     retriever,
     llm,
-    router,
+    # router,
     doc_grader,
-    hallucination_grader,
-    answer_grader,
+    quality_grader,
+    # hallucination_grader,
+    # answer_grader,
     web_search_tool,
     enable_websearch: bool = True,   # <<< nouveau paramètre
 ):
@@ -155,17 +157,17 @@ def build_graph(
 
     # ---------- ROUTERS / DECISIONS ----------
 
-    def route_question(state: Dict[str, Any]):
-        print("---ROUTE QUESTION---")
-        if not enable_websearch:
-            print("[router] Web search désactivé → force RETRIEVE (RAG).")
-            return "retrieve"
-        decision = route_decision(router, state["question"])
-        if decision == "websearch":
-            print("---ROUTE QUESTION TO WEB SEARCH---")
-            return "websearch"
-        print("---ROUTE QUESTION TO RAG---")
-        return "retrieve"
+    # def route_question(state: Dict[str, Any]):
+    #     print("---ROUTE QUESTION---")
+    #     if not enable_websearch:
+    #         print("[router] Web search désactivé → force RETRIEVE (RAG).")
+    #         return "retrieve"
+    #     decision = route_decision(router, state["question"])
+    #     if decision == "websearch":
+    #         print("---ROUTE QUESTION TO WEB SEARCH---")
+    #         return "websearch"
+    #     print("---ROUTE QUESTION TO RAG---")
+    #     return "retrieve"
 
     def decide_to_generate(state: Dict[str, Any]):
         print("---ASSESS GRADED DOCUMENTS---")
@@ -175,8 +177,44 @@ def build_graph(
         print("---DECISION: GENERATE---")
         return "generate"
 
+    # def grade_generation_v_documents_and_question(state: Dict[str, Any]):
+    #     print("---CHECK HALLUCINATIONS---")
+    #     question = state["question"]
+    #     documents = state["documents"]
+    #     generation = state["generation"]
+    #     max_retries = state.get("max_retries", 3)
+    #     loop_step = state.get("loop_step", 0)
+
+    #     facts = format_docs(documents)
+    #     halluc_grade, _ = grade_hallucination(
+    #         hallucination_grader, facts_text=facts, generation_text=generation.content
+    #     )
+
+    #     if halluc_grade == "yes":
+    #         print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
+    #         ans_grade, _ = grade_answer(
+    #             answer_grader, question=question, generation_text=generation.content
+    #         )
+    #         if ans_grade == "yes":
+    #             print("---DECISION: GENERATION ADDRESSES QUESTION---")
+    #             return "useful"
+    #         elif loop_step <= max_retries:
+    #             print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
+    #             # Si web search off, on réessaie la génération RAG
+    #             return "not useful"
+    #         else:
+    #             print("---DECISION: MAX RETRIES REACHED---")
+    #             return "max retries"
+    #     else:
+    #         if loop_step <= max_retries:
+    #             print("---DECISION: GENERATION NOT GROUNDED, RE-TRY---")
+    #             return "not supported"
+    #         else:
+    #             print("---DECISION: MAX RETRIES REACHED---")
+    #             return "max retries"
+
     def grade_generation_v_documents_and_question(state: Dict[str, Any]):
-        print("---CHECK HALLUCINATIONS---")
+        print("---CHECK QUALITY (HALLUCINATION + RELEVANCE)---")
         question = state["question"]
         documents = state["documents"]
         generation = state["generation"]
@@ -184,31 +222,45 @@ def build_graph(
         loop_step = state.get("loop_step", 0)
 
         facts = format_docs(documents)
-        halluc_grade, _ = grade_hallucination(
-            hallucination_grader, facts_text=facts, generation_text=generation.content
+        
+        # APPEL UNIQUE ICI
+        score = grade_generation_quality(
+            quality_grader, 
+            documents_text=facts, 
+            question=question, 
+            generation_text=generation.content
         )
+        
+        is_grounded = score.is_grounded.lower()
+        is_relevant = score.is_relevant.lower()
+        
+        print(f"---SCORES: Grounded={is_grounded} | Relevant={is_relevant}---")
 
-        if halluc_grade == "yes":
-            print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
-            ans_grade, _ = grade_answer(
-                answer_grader, question=question, generation_text=generation.content
-            )
-            if ans_grade == "yes":
+        # LOGIQUE DE DÉCISION
+        
+        # 1. Vérification Hallucination
+        if is_grounded == "yes":
+            print("---DECISION: GENERATION IS GROUNDED---")
+            
+            # 2. Vérification Pertinence (On a déjà le résultat !)
+            if is_relevant == "yes":
                 print("---DECISION: GENERATION ADDRESSES QUESTION---")
                 return "useful"
-            elif loop_step <= max_retries:
+            
+            # Si grounded mais pas relevant -> Websearch (ou retry)
+            else:
                 print("---DECISION: GENERATION DOES NOT ADDRESS QUESTION---")
-                # Si web search off, on réessaie la génération RAG
-                return "not useful"
-            else:
-                print("---DECISION: MAX RETRIES REACHED---")
-                return "max retries"
+                if loop_step <= max_retries:
+                    return "not useful" # Va déclencher websearch selon le graphe
+                else:
+                    return "max retries"
+        
+        # Si Hallucination (pas grounded)
         else:
+            print("---DECISION: GENERATION NOT GROUNDED (HALLUCINATION)---")
             if loop_step <= max_retries:
-                print("---DECISION: GENERATION NOT GROUNDED, RE-TRY---")
-                return "not supported"
+                return "not supported" # Va déclencher retry generate
             else:
-                print("---DECISION: MAX RETRIES REACHED---")
                 return "max retries"
 
     # ---------- BUILD GRAPH ----------
@@ -224,16 +276,21 @@ def build_graph(
         workflow.add_node("websearch", web_search)
 
     # Entry point conditionnel
-    if enable_websearch:
-        workflow.set_conditional_entry_point(
-            route_question,
-            {"websearch": "websearch", "retrieve": "retrieve"},
-        )
-    else:
-        workflow.set_conditional_entry_point(
-            route_question,
-            {"retrieve": "retrieve"},
-        )
+    # if enable_websearch:
+    #     workflow.set_conditional_entry_point(
+    #         route_question,
+    #         {"websearch": "websearch", "retrieve": "retrieve"},
+    #     )
+    # else:
+    #     workflow.set_conditional_entry_point(
+    #         route_question,
+    #         {"retrieve": "retrieve"},
+    #     )
+
+    # Entry point direct (NOUVEAU : Speculative RAG)
+    # On commence TOUJOURS par chercher dans la base locale (très rapide).
+    # Si les documents sont mauvais, le "grade_documents" nous enverra au websearch ensuite.
+    workflow.set_entry_point("retrieve")
 
     # Edges
     if enable_websearch:

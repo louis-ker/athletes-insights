@@ -46,6 +46,12 @@ from .prompts import (
     ANSWER_GRADER_INSTRUCTIONS, ANSWER_GRADER_PROMPT,
 )
 
+from .types import GradeDocumentsBatch, GradeQuality # <--- Ajout GradeQuality
+from .prompts import (
+    DOC_GRADER_INSTRUCTIONS, DOC_GRADER_PROMPT,
+    QUALITY_GRADER_INSTRUCTIONS, QUALITY_GRADER_PROMPT # <--- Ajout des prompts Quality
+)
+
 def create_doc_grader(llm):
     # On bind le modèle "Batch"
     return llm.with_structured_output(GradeDocumentsBatch)
@@ -85,6 +91,27 @@ def grade_documents_batch(structured_grader, documents: list, question: str):
         return {item.index: item.binary_score.lower() for item in result.scores}
     return {}
 # -----------------------------------------
+
+def create_quality_grader(llm):
+    return llm.with_structured_output(GradeQuality)
+
+def grade_generation_quality(structured_grader, documents_text: str, question: str, generation_text: str):
+    """
+    Vérifie en UN SEUL APPEL si la réponse est ancrée (grounded) ET pertinente (relevant).
+    Renvoie un objet GradeQuality (is_grounded, is_relevant).
+    """
+    prompt = QUALITY_GRADER_PROMPT.format(
+        question=question, 
+        documents=documents_text, 
+        generation=generation_text
+    )
+    
+    result = structured_grader.invoke(
+        [SystemMessage(content=QUALITY_GRADER_INSTRUCTIONS), HumanMessage(content=prompt)]
+    )
+    
+    # On renvoie l'objet complet pour traiter la logique dans le workflow
+    return result
 
 def grade_hallucination(structured_grader, facts_text: str, generation_text: str) -> str:
     prompt = HALLUCINATION_GRADER_PROMPT.format(documents=facts_text, generation=generation_text)

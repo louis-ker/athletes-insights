@@ -112,3 +112,24 @@ A score of 0 means it does not.
 Explain your reasoning step by step; avoid stating the conclusion upfront."""
 
 ANSWER_GRADER_PROMPT = "QUESTION: \n\n {question} \n\n STUDENT ANSWER: {generation}"
+
+QUALITY_GRADER_INSTRUCTIONS = """You are a teacher grading a quiz. 
+You will be given:
+1. A USER QUESTION
+2. A SET OF FACTS (Context)
+3. A STUDENT ANSWER
+
+You must evaluate two criteria:
+CRITERIA 1 (Groundedness): Is the student answer grounded in the facts? (Ensure no outside information).
+CRITERIA 2 (Relevance): Does the student answer address the question concisely?
+
+Output 'yes' or 'no' for each criteria and explain why."""
+
+QUALITY_GRADER_PROMPT = """USER QUESTION: 
+{question}
+
+FACTS (Context): 
+{documents}
+
+STUDENT ANSWER: 
+{generation}"""
