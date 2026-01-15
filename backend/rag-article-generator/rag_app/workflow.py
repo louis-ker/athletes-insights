@@ -108,12 +108,48 @@ def build_graph(
     #                 web_search_flag = "Yes"
     #     return {"documents": filtered_docs, "web_search": web_search_flag}
 
+    # def grade_documents(state: Dict[str, Any]):
+    #     print("---CHECK DOCUMENT RELEVANCE (BATCH)---")
+    #     question = state["question"]
+    #     documents = state["documents"]
+        
+    #     # S'il n'y a pas de documents, on sort direct
+    #     if not documents:
+    #         return {"documents": [], "web_search": "Yes" if enable_websearch else "No"}
+
+    #     # 1. APPEL LLM UNIQUE (Batch)
+    #     scores_dict = grade_documents_batch(doc_grader, documents, question)
+        
+    #     filtered_docs = []
+    #     web_search_flag = "No"
+        
+    #     # 2. On itère localement (super rapide, pas d'appel LLM)
+    #     for i, d in enumerate(documents):
+    #         # On récupère le score via l'index. Par défaut "no" si le LLM a oublié l'index.
+    #         score = scores_dict.get(i, "no")
+            
+    #         if score == "yes":
+    #             print(f"---GRADE: Doc {i} RELEVANT---")
+    #             filtered_docs.append(d)
+    #         else:
+    #             print(f"---GRADE: Doc {i} NOT RELEVANT---")
+        
+    #     # 3. Logique de déclenchement Web Search
+    #     # OPTIMISATION: On ne déclenche Web Search que si on a perdu TROP de documents
+    #     # Exemple : Si on a 0 pertinent, ou si on a récupéré moins de 1 doc valide
+    #     if len(filtered_docs) == 0:
+    #         if enable_websearch:
+    #             print("---DECISION: ALL DOCS IRRELEVANT -> WEB SEARCH---")
+    #             web_search_flag = "Yes"
+        
+    #     return {"documents": filtered_docs, "web_search": web_search_flag}
+
     def grade_documents(state: Dict[str, Any]):
         print("---CHECK DOCUMENT RELEVANCE (BATCH)---")
         question = state["question"]
         documents = state["documents"]
         
-        # S'il n'y a pas de documents, on sort direct
+        # S'il n'y a pas de documents au départ, web search direct
         if not documents:
             return {"documents": [], "web_search": "Yes" if enable_websearch else "No"}
 
@@ -123,9 +159,8 @@ def build_graph(
         filtered_docs = []
         web_search_flag = "No"
         
-        # 2. On itère localement (super rapide, pas d'appel LLM)
+        # 2. On filtre les documents
         for i, d in enumerate(documents):
-            # On récupère le score via l'index. Par défaut "no" si le LLM a oublié l'index.
             score = scores_dict.get(i, "no")
             
             if score == "yes":
@@ -133,14 +168,18 @@ def build_graph(
                 filtered_docs.append(d)
             else:
                 print(f"---GRADE: Doc {i} NOT RELEVANT---")
+                # ANCIEN CODE SUPPRIMÉ :
+                # if enable_websearch: web_search_flag = "Yes"
         
-        # 3. Logique de déclenchement Web Search
-        # OPTIMISATION: On ne déclenche Web Search que si on a perdu TROP de documents
-        # Exemple : Si on a 0 pertinent, ou si on a récupéré moins de 1 doc valide
+        # 3. NOUVELLE LOGIQUE DE DÉCLENCHEMENT (Seuil de tolérance)
+        # On active la recherche Web SEULEMENT si on a 0 document pertinent.
+        # (Tu peux changer 0 par 1 si tu veux être plus strict et exiger au moins 2 docs)
         if len(filtered_docs) == 0:
             if enable_websearch:
-                print("---DECISION: ALL DOCS IRRELEVANT -> WEB SEARCH---")
+                print("---DECISION: NO RELEVANT DOCS FOUND -> WEB SEARCH---")
                 web_search_flag = "Yes"
+        else:
+            print(f"---DECISION: {len(filtered_docs)} GOOD DOCS FOUND -> KEEP GOING---")
         
         return {"documents": filtered_docs, "web_search": web_search_flag}
 
